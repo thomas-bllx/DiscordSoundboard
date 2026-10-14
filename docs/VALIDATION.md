@@ -1,4 +1,15 @@
-# Validation de la version 1.1.0
+# Validation des versions Windows
+
+## Version 1.1.1 — préparation de la distribution publique
+
+- Vérification TypeScript et **52 tests automatisés réussis** le 14 octobre 2026.
+- FFmpeg 9.0.2 audio compilé depuis les sources officielles non modifiées, sous LGPL-2.1-or-later, sans bibliothèque de codec externe ni réseau. Archive source, recette et empreintes préparées avec la distribution.
+- Import et décodage FFmpeg réels de WAV, MP3, OGG Vorbis et OGG Opus synthétiques vérifiés. Les tests de bureau utilisent des signaux synthétiques, sans enregistrement personnel.
+- Les métadonnées d’auteur utilisent le nom du projet. Les données locales et rapports de tests sont exclus des paquets.
+
+Les essais de bureau ci-dessous décrivent la version 1.1.0 ; les limites Discord, pilote et jeux réels restent applicables.
+
+## Version 1.1.0
 
 Les tests n’utilisent aucun compte ou serveur Discord réel. La version portable, l’installeur NSIS et le dossier Windows autonome ont été générés localement.
 

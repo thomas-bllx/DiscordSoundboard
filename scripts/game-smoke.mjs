@@ -3,26 +3,13 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { testWav } from "./test-audio.mjs";
 const exec = promisify(execFile);
 await mkdir(".test-data", { recursive: true });
 await mkdir("test-results", { recursive: true });
 const data = await mkdtemp(resolve(".test-data/game-"));
 const fixture = join(data, "Soundboard test.wav");
-await exec(
-  resolve("vendor/ffmpeg/ffmpeg.exe"),
-  [
-    "-hide_banner",
-    "-loglevel",
-    "error",
-    "-f",
-    "lavfi",
-    "-i",
-    "sine=frequency=440:duration=12",
-    "-y",
-    fixture,
-  ],
-  { windowsHide: true },
-);
+await writeFile(fixture, testWav(12));
 const env = { ...process.env, SOUNDBOARD_DATA_DIR: data };
 delete env.ELECTRON_RUN_AS_NODE;
 const desktop = await electron.launch({
@@ -76,6 +63,8 @@ try {
   await desktop.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].webContents.setAudioMuted(true),
   );
+  // Keep tests independent from a user's running soundboard and its default STOP.
+  await invoke("updateSettings", { stopShortcut: "Control+Alt+F10" });
   const denied = await page.evaluate(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -229,15 +218,16 @@ try {
   results.push(
     "WAV réellement décodé et signal mesuré dans le mixeur Web Audio ; jeu seul sans lecture Discord ou locale ; STOP coupe le signal",
   );
-  await invoke("updateSound", id, { shortcut: "Control+Alt+8" });
+  await invoke("updateSound", id, { shortcut: "Control+Alt+F9" });
+  expect((await state()).shortcuts.filter((item) => [id, "stop"].includes(item.soundId)).every((item) => item.status === "registered")).toBe(true);
   await desktop.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].minimize());
-  await exec("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", resolve("scripts/press-shortcut.ps1"), "-Key", "56"], { windowsHide: true });
+  await exec("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", resolve("scripts/press-shortcut.ps1"), "-Key", "120"], { windowsHide: true });
   await expect.poll(async () => (await state()).game.status).toBe("playing");
   expect((await state()).broadcast.status).toBe("idle");
-  await exec("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", resolve("scripts/press-shortcut.ps1"), "-Key", "48"], { windowsHide: true });
+  await exec("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", resolve("scripts/press-shortcut.ps1"), "-Key", "121"], { windowsHide: true });
   await expect.poll(async () => (await state()).game.status).toBe("idle");
   await desktop.evaluate(({ BrowserWindow }) => { const w = BrowserWindow.getAllWindows()[0]; w.restore(); w.show(); w.focus(); });
-  results.push("Raccourci global Ctrl+Alt+8 et STOP Ctrl+Alt+0 : lecture en jeu seul et arrêt avec fenêtre réduite");
+  results.push("Raccourci global Ctrl+Alt+F9 et STOP Ctrl+Alt+F10 : lecture en jeu seul et arrêt avec fenêtre réduite");
   await invoke("play", id, true);
   await expect.poll(async () => (await state()).local.status).toBe("playing");
   expect((await state()).game.status).toBe("idle");

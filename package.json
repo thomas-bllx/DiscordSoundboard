@@ -1,7 +1,7 @@
 {
   "name": "local-discord-soundboard",
   "productName": "Local Discord Soundboard",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Soundboard locale Windows avec bot Discord indépendant du microphone.",
   "author": "Local Discord Soundboard contributors",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "postinstall": "node scripts/setup.mjs",
     "dev": "node scripts/dev.mjs",
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && node scripts/setup-vbcable.mjs && node scripts/build.mjs",
+    "build": "npm run typecheck && powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install-ffmpeg.ps1 && node scripts/setup-vbcable.mjs && node scripts/build.mjs",
     "start": "node scripts/start.mjs",
     "test": "vitest run",
     "test:desktop": "npm run build && node scripts/smoke.mjs",
@@ -71,7 +71,8 @@
       },
       {
         "from": "vendor/ffmpeg",
-        "to": "ffmpeg"
+        "to": "ffmpeg",
+        "filter": ["ffmpeg.exe", "LICENSE", "README.txt", "manifest.json"]
       },
       {
         "from": "resources/licenses",

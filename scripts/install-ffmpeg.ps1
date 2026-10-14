@@ -4,7 +4,8 @@ $taskRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $ffmpegDirectory = Join-Path $taskRoot 'vendor\ffmpeg'
 $ffmpegExe = Join-Path $ffmpegDirectory 'ffmpeg.exe'
 $manifestPath = Join-Path $ffmpegDirectory 'manifest.json'
-$archiveHash = '60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba'
+$spec = Get-Content -LiteralPath (Join-Path $taskRoot 'resources\ffmpeg-runtime.json') -Raw | ConvertFrom-Json
+$archiveHash = $spec.archiveSha256
 function Get-SoundboardSha256([string]$Path) {
   $stream = [System.IO.File]::OpenRead($Path)
   $algorithm = [System.Security.Cryptography.SHA256]::Create()
@@ -13,16 +14,16 @@ function Get-SoundboardSha256([string]$Path) {
 }
 if ((Test-Path -LiteralPath $ffmpegExe) -and (Test-Path -LiteralPath $manifestPath)) {
   $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
-  if ($manifest.version -eq '9.0.2' -and $manifest.sha256 -eq (Get-SoundboardSha256 $ffmpegExe)) {
-    Write-Output 'FFmpeg 9.0.2 verifie et deja disponible.'
+  if ($manifest.variant -eq $spec.variant -and $manifest.version -eq $spec.version -and $spec.binarySha256 -eq (Get-SoundboardSha256 $ffmpegExe)) {
+    Write-Output 'FFmpeg audio 9.0.2 verifie et deja disponible.'
     exit 0
   }
 }
 New-Item -ItemType Directory -Path $ffmpegDirectory -Force | Out-Null
-$archivePath = Join-Path $taskRoot 'vendor\ffmpeg-9.0.2.zip'
-$url = 'https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-9.0.2-essentials_build.zip'
+$archivePath = Join-Path $taskRoot 'vendor\ffmpeg-soundboard.zip'
+$url = $spec.url
 if (!(Test-Path -LiteralPath $archivePath)) {
-  Write-Output 'Telechargement de FFmpeg 9.0.2 (Windows x64)...'
+  Write-Output 'Telechargement de FFmpeg audio 9.0.2 (Windows x64)...'
   Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile $archivePath
 }
 if ((Get-SoundboardSha256 $archivePath) -ne $archiveHash) {
@@ -31,19 +32,15 @@ if ((Get-SoundboardSha256 $archivePath) -ne $archiveHash) {
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
 try {
-  $files = @{ 'bin/ffmpeg.exe' = 'ffmpeg.exe'; 'LICENSE' = 'LICENSE'; 'README.txt' = 'README.txt' }
+  $files = @{ 'ffmpeg.exe' = 'ffmpeg.exe'; 'LICENSE' = 'LICENSE'; 'README.txt' = 'README.txt'; 'manifest.json' = 'manifest.json' }
   foreach ($suffix in $files.Keys) {
-    $entry = $archive.Entries | Where-Object { $_.FullName.EndsWith('/' + $suffix) } | Select-Object -First 1
+    $entry = $archive.Entries | Where-Object { $_.FullName -eq $suffix } | Select-Object -First 1
     if (!$entry) { throw ('Fichier absent de FFmpeg : ' + $suffix) }
     $destination = Join-Path $ffmpegDirectory $files[$suffix]
     [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $destination, $true)
   }
 } finally { $archive.Dispose() }
-$manifest = @{
-  version = '9.0.2'; url = $url; archiveSha256 = $archiveHash;
-  sha256 = (Get-SoundboardSha256 $ffmpegExe);
-  source = 'https://github.com/FFmpeg/FFmpeg/commit/946fcce07b';
-  license = 'GPL-3.0-or-later';
+if ((Get-SoundboardSha256 $ffmpegExe) -ne $spec.binarySha256) {
+  throw 'Binaire FFmpeg non conforme a l empreinte attendue.'
 }
-$manifest | ConvertTo-Json | Set-Content -LiteralPath $manifestPath -Encoding UTF8
-Write-Output 'FFmpeg 9.0.2 installe, SHA-256 verifie.'
+Write-Output 'FFmpeg audio 9.0.2 installe, archive et binaire verifies.'

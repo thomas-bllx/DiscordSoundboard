@@ -1,0 +1,12 @@
+{
+    "version":  "9.0.2",
+    "variant":  "soundboard-audio",
+    "license":  "LGPL-2.1-or-later",
+    "url":  "https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.1/ffmpeg-9.0.2-soundboard-win64.zip",
+    "archiveSha256":  "52ec2b4a3b4c2ced9867beee5dcbe4e17c7053b7787fecdb51197ade4d2f67af",
+    "binarySha256":  "7489d0ea00412d052182068ec1794ff56780eeec558045d3ca7504a90ae411ea",
+    "sourcesUrl":  "https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.1/ffmpeg-9.0.2-soundboard-sources.zip",
+    "sourcesSha256":  "8f1fd0e3e88cc77927a47cc409dfd6ceb246acede6ba39144573760915c145df",
+    "upstreamSource":  "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+    "upstreamSourceSha256":  "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e"
+}

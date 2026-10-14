@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-const ffmpeg = resolve("vendor/ffmpeg/ffmpeg.exe");
+import { testWav } from "./test-audio.mjs";
 
 const exec = promisify(execFile);
 await mkdir(".test-data", { recursive: true });
@@ -14,41 +14,10 @@ await mkdir(fixtures);
 const source = join(fixtures, "Signal de test.wav");
 const mp3 = join(fixtures, "Victoire.mp3");
 const ogg = join(fixtures, "Notification.ogg");
-await exec(
-  ffmpeg,
-  [
-    "-hide_banner",
-    "-loglevel",
-    "error",
-    "-f",
-    "lavfi",
-    "-i",
-    "sine=frequency=440:duration=5",
-    "-y",
-    source,
-  ],
-  { windowsHide: true },
-);
-await exec(
-  ffmpeg,
-  ["-hide_banner", "-loglevel", "error", "-i", source, "-y", mp3],
-  { windowsHide: true },
-);
-await exec(
-  ffmpeg,
-  [
-    "-hide_banner",
-    "-loglevel",
-    "error",
-    "-i",
-    source,
-    "-c:a",
-    "libvorbis",
-    "-y",
-    ogg,
-  ],
-  { windowsHide: true },
-);
+const encoded = JSON.parse(await readFile(new URL("../tests/audio-fixtures.json", import.meta.url), "utf8"));
+await writeFile(source, testWav());
+await writeFile(mp3, Buffer.from(encoded.mp3, "base64"));
+await writeFile(ogg, Buffer.from(encoded.vorbis, "base64"));
 const executablePath = process.env.SOUNDBOARD_TEST_EXE;
 const results = [];
 let desktop;

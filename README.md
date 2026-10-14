@@ -1,15 +1,29 @@
 # Local Discord Soundboard
 
+## ⬇️ [Télécharger l’installeur Windows](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.1/Local-Discord-Soundboard-1.1.1-x64-nsis.exe)
+
+**Windows 10 / 11 — 64 bits · Version 1.1.1 · Aucun Node.js, Git ou compilateur à installer.**
+
+1. Cliquez sur le lien ci-dessus et ouvrez le fichier téléchargé.
+2. Suivez l’assistant d’installation, puis ouvrez **Local Discord Soundboard**.
+3. Importez vos sons MP3, WAV ou OGG. Pour Discord, suivez le [guide de création de votre bot](#créer-le-bot-dans-discord). Pour les jeux, ouvrez **En jeu** dans l’application.
+
+[Notes de version et fichiers de téléchargement](https://github.com/thomas-bllx/DiscordSoundboard/releases/tag/v1.1.1) · [Guide du mode jeu](#diffuser-dans-les-jeux-sans-diffuser-dans-discord)
+
+L’application n’est pas signée avec un certificat commercial : Windows peut afficher une alerte d’éditeur inconnu. Téléchargez-la depuis ce dépôt officiel. **macOS, Linux et Windows ARM ne sont pas pris en charge.**
+
 Une soundboard Windows avec boutons personnalisables, profils, préécoute locale et raccourcis globaux. Les sons destinés à Discord sont transmis par **votre propre bot, exécuté sur votre PC** : votre micro Discord et Krisp restent indépendants. Le mode **En jeu** ajoute une sortie audio virtuelle et un mélange facultatif avec votre voix, activé explicitement depuis l’application.
 
 ## Démarrage rapide
 
-Ce dépôt contient le code source, la documentation et les visuels du bot. Les sons, paramètres personnels, tokens et exécutables ne sont pas versionnés. Pour créer les exécutables, suivez la section [Développement et compilation](#développement-et-compilation), puis lancez `npm run dist`.
+Utilisez l’installeur proposé en haut de cette page pour une installation normale. Les exécutables sont publiés dans **Releases** ; les sources, la documentation et les visuels sont dans ce dépôt. Les sons personnels, paramètres et tokens ne sont jamais inclus.
+
+Pour compiler vous-même l’application, suivez la section [Développement et compilation](#développement-et-compilation), puis lancez `npm run dist`.
 
 Après compilation, dans `release/`, utilisez au choix :
 
-- `Local-Discord-Soundboard-1.1.0-x64-portable.exe` : application autonome, composants audio inclus.
-- `Local-Discord-Soundboard-1.1.0-x64-nsis.exe` : installeur Windows pour l’utilisateur courant.
+- `Local-Discord-Soundboard-1.1.1-x64-portable.exe` : application autonome, composants audio inclus.
+- `Local-Discord-Soundboard-1.1.1-x64-nsis.exe` : installeur Windows pour l’utilisateur courant.
 - `win-unpacked/Local Discord Soundboard.exe` : application décompressée. Gardez **tout le dossier** `win-unpacked` ensemble.
 
 Les noms ci-dessus correspondent aux cibles configurées ; les validations réellement réalisées sont consignées dans [docs/VALIDATION.md](docs/VALIDATION.md). Les exécutables ne sont pas signés avec un certificat commercial. Windows peut donc signaler un éditeur inconnu.
@@ -227,4 +241,4 @@ docs/            Architecture détaillée, état des validations et licences
 
 ## Licences
 
-Le code de l’application est sous [licence MIT](LICENSE). Les composants tiers conservent leurs propres licences. FFmpeg 9.0.2 est un programme externe non modifié, livré avec sa licence GPLv3, les informations de sa compilation et un manifeste de provenance. Les avis des bibliothèques sont regroupés par `npm run licenses` et intégrés dans `resources/licenses` de l’application empaquetée. Consultez [docs/THIRD_PARTY.md](docs/THIRD_PARTY.md), en particulier avant toute redistribution publique de binaires.
+Le code de l’application est sous [licence MIT](LICENSE). Les composants tiers conservent leurs propres licences. L’application utilise un exécutable FFmpeg 9.0.2 sous **LGPL-2.1-or-later**, compilé sans modification des sources et sans codec externe. Ses [sources correspondantes et sa recette de compilation](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.1/ffmpeg-9.0.2-soundboard-sources.zip) sont disponibles avec les téléchargements. Les avis des bibliothèques sont regroupés par `npm run licenses` et intégrés dans `resources/licenses` de l’application empaquetée. Consultez [docs/THIRD_PARTY.md](docs/THIRD_PARTY.md) et [docs/FFMPEG-BUILD.md](docs/FFMPEG-BUILD.md).

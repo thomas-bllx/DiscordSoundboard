@@ -19,6 +19,17 @@ afterEach(async () => {
   await rm(root, { recursive: true, force: true });
 });
 describe("chaîne audio réelle", () => {
+  it.each([
+    ["mp3", "mp3", 5],
+    ["vorbis", "ogg", 5],
+    ["opus", "ogg", 0.5],
+  ] as const)("decodes the synthetic %s fixture with the bundled runtime", async (codec, extension, seconds) => {
+    const fixtures = JSON.parse(await readFile(new URL("./audio-fixtures.json", import.meta.url), "utf8"));
+    const source = join(root, `fixture.${extension}`);
+    await writeFile(source, Buffer.from(fixtures[codec], "base64"));
+    expect(await probeAudio(ffmpeg, source)).toBeCloseTo(seconds, 1);
+  });
+
   it("decodes a real WAV with the embedded FFmpeg and copies it persistently", async () => {
     const store = new ConfigStore(join(root, "data"));
     await store.load();

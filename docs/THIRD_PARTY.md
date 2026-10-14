@@ -12,7 +12,7 @@ Le code de cette application est MIT. Les licences des composants restent applic
 | @snazzah/davey | 0.1.12 | MIT, bibliothèques Rust/OpenMLS selon leurs licences |
 | opusscript | 0.1.1 | MIT pour l’enveloppe ; notices Opus/Emscripten dans le paquet |
 | Zod | 4.6.7 | MIT |
-| FFmpeg Windows essentials | 9.0.2 | GPLv3, distribution Gyan, programme séparé |
+| FFmpeg audio Windows | 9.0.2 | LGPL-2.1-or-later, sources officielles non modifiées, programme séparé |
 | VB-CABLE standard | Driver Pack45, octobre 2024 | Donationware, VB-Audio Software |
 
 La liste automatisée et les textes trouvés dans les paquets sont produits dans `resources/licenses/` par `npm run licenses`. Le dossier est livré à côté des ressources de l’exécutable. Les composants embarqués dans le rendu React sont aussi inclus dans ce relevé. Le paquet Electron distribue également `LICENSE` et `LICENSES.chromium.html`.
@@ -30,12 +30,12 @@ Le paquet standard intact est inclus, sans les produits payants A+B ou C+D. L’
 
 ## FFmpeg
 
-- Distributeur référencé par le [site officiel FFmpeg](https://ffmpeg.org/download.html) : [Gyan Windows Builds](https://www.gyan.dev/ffmpeg/builds/).
-- Archive fixée : [FFmpeg 9.0.2 essentials x64](https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-9.0.2-essentials_build.zip).
-- [Empreinte publiée](https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-9.0.2-essentials_build.zip.sha256) : `60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba`.
-- [Sources FFmpeg correspondant à cette compilation](https://github.com/FFmpeg/FFmpeg/commit/946fcce07b).
+- Sources originales : [FFmpeg 9.0.2](https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz), SHA-256 `8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e`.
+- [Sources correspondantes et recette de compilation](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.1/ffmpeg-9.0.2-soundboard-sources.zip), publiées à côté de l’installeur.
+- [Binaire autonome et notices](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.1/ffmpeg-9.0.2-soundboard-win64.zip). Les empreintes exactes sont dans `resources/ffmpeg-runtime.json`.
+- [Instructions de reconstruction](FFMPEG-BUILD.md) et script `scripts/build-ffmpeg.sh`.
 - La licence complète, le README de compilation et le manifeste avec le hash du binaire sont dans `vendor/ffmpeg/` (développement) et `resources/ffmpeg/` (application empaquetée).
 
-Le programme FFmpeg n’est pas modifié et est exécuté séparément par l’application. Aucun composant n’est configuré avec `--enable-nonfree` par ce projet. Le README du distributeur recense les bibliothèques de sa compilation. Voir aussi les [informations de licence officielles de FFmpeg](https://ffmpeg.org/legal.html).
+Le programme FFmpeg est exécuté séparément par l’application. Les sources sont intactes ; la recette désactive GPL, nonfree, les composants externes et le réseau. Le décodage MP3/WAV/OGG, la conversion audio et les sorties PCM/null sont inclus. Il n’y a aucune bibliothèque de codec tierce à lier ou à installer. Voir les [informations de licence officielles de FFmpeg](https://ffmpeg.org/legal.html).
 
-**Redistribution publique :** livrer les notices seules ne remplace pas les obligations de mise à disposition des sources correspondantes. Avant de republier l’installeur ou le portable, fournir les sources correspondant au binaire FFmpeg et à ses bibliothèques liées, avec leurs licences et instructions de compilation, selon les licences applicables. Les liens et le manifeste servent à identifier ces composants ; ils ne constituent pas une offre écrite de sources. Aucune publication ou redistribution publique n’a été effectuée par les scripts de ce projet.
+**Redistribution publique :** conserver les licences et l’accès aux sources correspondantes avec les exécutables. La version 1.1.1 fournit effectivement l’archive source originale et la recette de compilation, sans faire dépendre l’utilisateur d’une demande par courrier. Les anciennes compilations locales utilisant FFmpeg Gyan GPLv3 ne font pas partie de cette publication.
