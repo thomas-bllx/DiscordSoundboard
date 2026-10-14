@@ -1,0 +1,120 @@
+{
+  "name": "local-discord-soundboard",
+  "productName": "Local Discord Soundboard",
+  "version": "1.1.0",
+  "description": "Soundboard locale Windows avec bot Discord indépendant du microphone.",
+  "author": "Local Discord Soundboard contributors",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "dist/main/index.cjs",
+  "engines": {
+    "node": ">=24.17.0"
+  },
+  "scripts": {
+    "postinstall": "node scripts/setup.mjs",
+    "dev": "node scripts/dev.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && node scripts/setup-vbcable.mjs && node scripts/build.mjs",
+    "start": "node scripts/start.mjs",
+    "test": "vitest run",
+    "test:desktop": "npm run build && node scripts/smoke.mjs",
+    "licenses": "node scripts/licenses.mjs",
+    "pack": "npm run build && npm run licenses && electron-builder --win --x64 --dir",
+    "dist": "npm run build && npm run licenses && electron-builder --win --x64",
+    "check": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@discordjs/voice": "0.19.2",
+    "@snazzah/davey": "0.1.12",
+    "discord.js": "14.27.0",
+    "opusscript": "0.1.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "electron": "44.7.2",
+    "electron-builder": "26.15.3",
+    "esbuild": "0.28.2",
+    "lucide-react": "1.56.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  },
+  "build": {
+    "appId": "app.localdiscordsoundboard.desktop",
+    "asar": true,
+    "npmRebuild": false,
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "**/*.node",
+      "**/*.wasm"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/vb-cable",
+        "to": "vb-cable",
+        "filter": ["VBCABLE_Driver_Pack45.zip"]
+      },
+      {
+        "from": "vendor/ffmpeg",
+        "to": "ffmpeg"
+      },
+      {
+        "from": "resources/licenses",
+        "to": "licenses"
+      },
+      {
+        "from": "README.md",
+        "to": "README.md"
+      },
+      {
+        "from": "docs",
+        "to": "docs"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "resources/icon.ico",
+      "signExecutable": false
+    },
+    "nsis": {
+      "artifactName": "Local-Discord-Soundboard-${version}-${arch}-nsis.${ext}",
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true
+    },
+    "portable": {
+      "artifactName": "Local-Discord-Soundboard-${version}-${arch}-portable.${ext}",
+      "requestExecutionLevel": "user"
+    }
+  }
+}

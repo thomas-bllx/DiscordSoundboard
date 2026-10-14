@@ -1,0 +1,30 @@
+Visuels du bot Local Discord Soundboard
+Créés le 14 octobre 2026 avec l'outil de génération d'images intégré à Codex.
+
+Fichiers : icone-bot.png et banniere-bot.png
+Aucun téléversement sur le compte Discord n'a été effectué.
+
+PROMPT DE L'ICÔNE
+
+Use case: logo-brand.
+Asset type: original avatar for a personal Discord soundboard bot, a finished square 1024 by 1024 pixel PNG.
+Primary request: a striking, highly readable audio emblem with a premium playful 3D finish, suited to a dark navy and mint soundboard app.
+Scene/backdrop: full bleed deep ink navy #10151d, subtle darker vignette, quiet and uncluttered.
+Subject: one centered emblem combining a thick rounded headphone arch with three bold vertical mint audio equalizer bars inside it. Left bar short, middle bar tallest, right bar medium height. The three bars are the focal point. Large smooth earcups, extremely simple geometry, no wires.
+Style/medium: polished stylized 3D brand artwork, softly beveled solid forms, satin dark graphite headphones with mint luminous accents, bright mint #79dfbe equalizer, restrained soft teal glow, beautiful soft studio lighting and dimensional shadows.
+Composition/framing: close frontal view with a very slight three-quarter depth, perfectly centered, generously scaled to fill about 70 percent of the canvas, all important forms safely inside the central circle so the avatar reads beautifully in a circular crop at 32 pixels. Clear silhouette and very few shapes.
+Constraints: full square artwork, opaque background; no letters, words, numbers, watermarks, official Discord logo, faces, tiny interface controls, busy background, outer border, mockup sheet, or multiple variants. Deliver one finished icon.
+
+PROMPT DE LA BANNIÈRE
+
+Use case: stylized-concept.
+Asset type: finished panoramic profile banner for a personal Discord soundboard bot.
+Primary request: create a beautiful matching banner for the supplied avatar, with a very wide approximately 17:6 aspect ratio (target 2040 by 720 pixels). One wide image only.
+Input image 1 is an identity and art-direction reference, not a canvas to edit. Preserve the reference emblem's design: dark graphite over-ear headphones around three glowing mint equalizer bars, short left, tall middle, medium right, rounded and dimensional. Match the materials and dark navy / mint color palette precisely.
+Scene/backdrop: deep ink navy #10151d across the full canvas, with a subtle teal atmospheric light behind the audio emblem. Restrained sound-wave ribbons sweep horizontally through the composition, elegant fine mint curves and a few broad blurred ripples conveying sound and energy, dark cinematic atmosphere.
+Subject/composition: place the emblem at roughly 72 percent of the image width, centered vertically, no more than 60 percent of the banner height so the top and bottom remain safe for cropping. Waves stretch from the left toward and behind the emblem. The leftmost third and especially the lower-left corner remain quiet, dark and low-contrast so a profile avatar can overlap without obscuring anything essential. Keep the far right edge spacious too. Overall polished, visually balanced, spacious and purposeful.
+Style/medium: premium stylized 3D render, satin charcoal surfaces, luminous mint #79dfbe accents, smooth rounded shapes, soft studio reflections. Faithfully maintain the visual identity of the supplied icon. Beautiful controlled highlights rather than excessive neon.
+Constraints: exactly one full-bleed wide landscape banner with opaque background. No text, names, lettering, numbers, watermark, official Discord logo, faces, floating user-interface windows, extra headphones, extra logos, mockup, border, contact sheet, or multiple panels. Do not simply place the square avatar on a background; integrate its emblem naturally into a new wide composition.
+
+Référence de la bannière : icone-bot.png générée ci-dessus.
+
