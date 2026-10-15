@@ -62,10 +62,23 @@ try {
   let state = await page.evaluate(() => window.soundboard.getState());
   expect(state.ok).toBe(true);
   expect(state.value.startupAvailable).toBe(false);
+  // Keep preview explicit even on machines with an installed virtual cable.
+  // Only the output adapter is simulated; decoded silence and volume zero
+  // ensure this test never transmits a signal to a user's audio devices.
+  await page.evaluate(() => {
+    navigator.mediaDevices.enumerateDevices = async () => [{
+      deviceId: "test-headset", kind: "audiooutput", groupId: "headset", label: "Casque de test",
+    }];
+    const setSink = HTMLMediaElement.prototype.setSinkId;
+    HTMLMediaElement.prototype.setSinkId = function (id) {
+      return setSink.call(this, id === "test-headset" ? "default" : id);
+    };
+  });
   const settings = await page.evaluate(() =>
     window.soundboard.updateSettings({
       masterVolume: 0,
       minimizeToTray: false,
+      gameMonitorId: "test-headset",
     }),
   );
   expect(settings.ok).toBe(true);

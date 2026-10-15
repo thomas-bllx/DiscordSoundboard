@@ -38,7 +38,7 @@ for (let launch = 1; launch <= 2; launch++) {
       return response.value;
     };
     await expect.poll(async () => (await state()).driver.status, { timeout: 20_000 }).toBe(expected);
-    await page.getByRole("navigation").getByRole("button", { name: "En jeu", exact: true }).click();
+    await page.getByRole("navigation").getByRole("button", { name: "Micro virtuel", exact: true }).click();
     await expect(page.getByRole("button", { name: "Installer le composant audio", exact: true })).toHaveCount(0);
     if (expected === "installed") {
       await expect(page.getByRole("button", { name: "Composant installé", exact: true })).toBeDisabled();

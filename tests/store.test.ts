@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { ConfigStore, TokenVault } from "../src/main/store";
@@ -45,6 +45,38 @@ describe("configuration locale", () => {
     expect(
       ConfigSchema.parse(JSON.parse(await readFile(store.file, "utf8"))),
     ).toEqual(store.value);
+  });
+  it("migrates the removed dual route without turning on the microphone and keeps an exact backup", async () => {
+    const entry = sound();
+    const legacy = {
+      ...defaultConfig(), version: 2, sounds: [entry],
+      settings: { ...defaultConfig().settings, output: "both", gameOutputId: "saved-cable", gameMicEnabled: false },
+    };
+    const contents = JSON.stringify(legacy);
+    await writeFile(join(root, "config.json"), contents);
+    const store = new ConfigStore(root);
+    await store.load();
+    expect(store.value.version).toBe(3);
+    expect(store.value.sounds).toEqual([entry]);
+    expect(store.value.settings).toMatchObject({ output: "game", gameOutputId: "saved-cable", gameMicEnabled: false });
+    expect(store.warning).toContain("Micro partout");
+    const backups = (await readdir(root)).filter((name) => name.startsWith("config.json.v2-"));
+    expect(backups).toHaveLength(1);
+    expect(await readFile(join(root, backups[0]!), "utf8")).toBe(contents);
+    expect(JSON.parse(await readFile(store.file, "utf8"))).toEqual(store.value);
+  });
+  it("persists the universal microphone mode and rejects the removed dual route", async () => {
+    const store = new ConfigStore(root);
+    await store.load();
+    await store.change((config) => {
+      config.settings.output = "micro";
+      config.settings.gameMicEnabled = true;
+      config.settings.gameMicrophoneId = "saved-microphone";
+    });
+    const restarted = new ConfigStore(root);
+    await restarted.load();
+    expect(restarted.value.settings).toMatchObject({ output: "micro", gameMicEnabled: true, gameMicrophoneId: "saved-microphone" });
+    expect(ConfigSchema.safeParse({ ...store.value, settings: { ...store.value.settings, output: "both" } }).success).toBe(false);
   });
   it("recovers the last valid backup and preserves damaged data", async () => {
     const store = new ConfigStore(root);

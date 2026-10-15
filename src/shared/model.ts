@@ -24,7 +24,7 @@ export const ProfileSchema = z
 export const SettingsSchema = z
   .object({
     masterVolume: z.number().min(0).max(1),
-    output: z.enum(["local", "discord", "game", "both"]),
+    output: z.enum(["local", "discord", "game", "micro"]),
     gameOutputId: z.string().max(300),
     gameMicrophoneId: z.string().max(300),
     gameMicEnabled: z.boolean(),
@@ -46,7 +46,7 @@ export const SettingsSchema = z
   .strict();
 export const ConfigSchema = z
   .object({
-    version: z.literal(2),
+    version: z.literal(3),
     profiles: z.array(ProfileSchema).min(1),
     activeProfileId: Id,
     sounds: z.array(SoundSchema),
@@ -103,12 +103,22 @@ export interface DriverState {
 }
 
 export function readConfig(raw: unknown): Config {
-  if (raw && typeof raw === "object" && "version" in raw && raw.version === 1) {
-    const previous = raw as { settings?: object };
+  if (
+    raw && typeof raw === "object" && "version" in raw &&
+    (raw.version === 1 || raw.version === 2)
+  ) {
+    const previous = raw as { settings?: Record<string, unknown> };
+    const settings = raw.version === 1
+      ? { ...defaultConfig().settings, ...previous.settings }
+      : previous.settings;
     return ConfigSchema.parse({
       ...raw,
-      version: 2,
-      settings: { ...defaultConfig().settings, ...previous.settings },
+      version: 3,
+      settings: {
+        ...settings,
+        // Preserve the virtual output without enabling a new microphone mode.
+        output: settings?.output === "both" ? "game" : settings?.output,
+      },
     });
   }
   return ConfigSchema.parse(raw);
@@ -116,7 +126,7 @@ export function readConfig(raw: unknown): Config {
 
 export function defaultConfig(): Config {
   return {
-    version: 2,
+    version: 3,
     profiles: [{ id: DEFAULT_PROFILE, name: "Mon soundboard" }],
     activeProfileId: DEFAULT_PROFILE,
     sounds: [],

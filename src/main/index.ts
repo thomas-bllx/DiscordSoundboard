@@ -154,7 +154,7 @@ async function play(id: string, preview = false): Promise<void> {
   const route = destinations(settings.output, preview);
   if (route.game && gameSession.status !== "ready")
     throw new UserError(
-      "Activez le mode jeu dans la page En jeu avant de diffuser un son.",
+      "Activez le micro virtuel dans la page Micro virtuel avant de diffuser un son.",
     );
   if (route.discord && discord.voice !== "ready")
     throw new UserError(
@@ -349,17 +349,17 @@ function registerIpc(): void {
           case "settings": {
             const patch = settingsPatchSchema.parse(data);
             const before = store.value.settings;
+            const outputChanged = patch.output !== undefined && patch.output !== before.output;
+            // Choosing this mode prepares voice mixing; capture still needs explicit activation.
+            if (outputChanged && patch.output === "micro" && patch.gameMicEnabled === undefined)
+              patch.gameMicEnabled = true;
             if (patch.launchAtLogin && !startupAvailable)
               throw new UserError(
                 "Le démarrage avec Windows nécessite la version installée, conservée au même emplacement.",
               );
             if (patch.stopShortcut !== undefined)
               patch.stopShortcut = normalizeShortcut(patch.stopShortcut);
-            if (
-              patch.output !== undefined &&
-              patch.output !== store.value.settings.output
-            )
-              await stop();
+            if (outputChanged) await stop();
             await store.change((config) => {
               Object.assign(config.settings, patch);
               if (config.settings.followUser && !config.settings.userId)
@@ -380,7 +380,7 @@ function registerIpc(): void {
                   patch[key as keyof typeof patch] !==
                     before[key as keyof typeof before],
               ) ||
-              (patch.output !== undefined && !destinations(patch.output).game)
+              outputChanged
             )
               disableGame();
             if (patch.launchAtLogin !== undefined)
@@ -422,7 +422,7 @@ function registerIpc(): void {
               .parse(data);
             if (local.report(input.requestId, input.status))
               notice(
-                "Préécoute impossible. Vérifiez le fichier et choisissez votre casque dans la page En jeu si le composant audio virtuel est installé.",
+                "Préécoute impossible. Vérifiez le fichier et choisissez votre casque dans la page Micro virtuel si le composant audio virtuel est installé.",
               );
             break;
           }
@@ -436,10 +436,8 @@ function registerIpc(): void {
               .parse(data);
             if (game.report(input.requestId, input.status)) {
               notice(
-                "Lecture en jeu impossible. Vérifiez le fichier audio et le périphérique virtuel.",
+                "Lecture vers le micro virtuel impossible. Vérifiez le fichier audio et le périphérique virtuel.",
               );
-              if (store.value.settings.output === "both")
-                await engine.request({ type: "stop" });
             }
             break;
           }
@@ -447,9 +445,7 @@ function registerIpc(): void {
             gameSession = gameSessionSchema.parse(data);
             if (gameSession.status !== "ready") game.stop();
             if (gameSession.status === "error") {
-              if (store.value.settings.output === "both")
-                await engine.request({ type: "stop" });
-              notice(gameSession.error || "Le mode jeu s’est arrêté.");
+              notice(gameSession.error || "Le micro virtuel s’est arrêté.");
             }
             changed();
             break;

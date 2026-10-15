@@ -1,20 +1,20 @@
 # Local Discord Soundboard
 
-## ⬇️ [Télécharger l’installeur Windows](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.2/Local-Discord-Soundboard-1.1.2-x64-nsis.exe)
+## ⬇️ [Télécharger l’installeur Windows](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.2.0/Local-Discord-Soundboard-1.2.0-x64-nsis.exe)
 
-**Windows 10 / 11 — 64 bits · Version 1.1.2 · Aucun Node.js, Git ou compilateur à installer.**
+**Windows 10 / 11 — 64 bits · Version 1.2.0 · Aucun Node.js, Git ou compilateur à installer.**
 
 1. Cliquez sur le lien ci-dessus et ouvrez le fichier téléchargé.
 2. Suivez l’assistant d’installation, puis ouvrez **Local Discord Soundboard**.
-3. Importez vos sons MP3, WAV ou OGG. Pour Discord, suivez le [guide de création de votre bot](#créer-le-bot-dans-discord). Pour les jeux, ouvrez **En jeu** dans l’application.
+3. Importez vos sons MP3, WAV ou OGG. Pour les transmettre avec votre voix, ouvrez **Micro virtuel → Micro partout**, puis suivez le [guide ci-dessous](#micro-partout--voix-et-sons-dans-discord-et-vos-jeux). Pour conserver Krisp avec un bot séparé, suivez le [guide de création du bot](#créer-le-bot-dans-discord).
 
-[Notes de version et fichiers de téléchargement](https://github.com/thomas-bllx/DiscordSoundboard/releases/tag/v1.1.2) · [Guide du mode jeu](#diffuser-dans-les-jeux-sans-diffuser-dans-discord)
+[Notes de version et fichiers de téléchargement](https://github.com/thomas-bllx/DiscordSoundboard/releases/tag/v1.2.0) · [Micro partout](#micro-partout--voix-et-sons-dans-discord-et-vos-jeux) · [Jeu uniquement](#diffuser-dans-les-jeux-sans-diffuser-dans-discord)
 
-**Déjà installé ?** Quittez la soundboard (y compris son icône près de l’horloge) puis lancez le nouvel installeur : vos sons et paramètres sont conservés. La version **1.1.2** corrige la demande répétée d’installation de VB-CABLE après redémarrage. Elle distingue un pilote absent d’un pilote installé mais désactivé dans Windows et indique comment le réactiver.
+**Déjà installé ?** Quittez la soundboard (y compris son icône près de l’horloge) puis lancez le nouvel installeur : vos sons et paramètres sont conservés. La version **1.2.0** remplace « Jeu + Discord » par **Micro partout** : voix et sons passent dans le micro virtuel, sans bot. Vous choisissez ce micro dans vos applications et désactivez vous-même Krisp. Le correctif de détection de VB-CABLE de la version 1.1.2 est inclus.
 
 L’application n’est pas signée avec un certificat commercial : Windows peut afficher une alerte d’éditeur inconnu. Téléchargez-la depuis ce dépôt officiel. **macOS, Linux et Windows ARM ne sont pas pris en charge.**
 
-Une soundboard Windows avec boutons personnalisables, profils, préécoute locale et raccourcis globaux. Les sons destinés à Discord sont transmis par **votre propre bot, exécuté sur votre PC** : votre micro Discord et Krisp restent indépendants. Le mode **En jeu** ajoute une sortie audio virtuelle et un mélange facultatif avec votre voix, activé explicitement depuis l’application.
+Une soundboard Windows avec boutons personnalisables, profils, préécoute locale et raccourcis globaux. **Bot Discord** transmet les sons par votre propre bot, exécuté sur votre PC : votre micro Discord et Krisp restent indépendants. **En jeu** et **Micro partout** mélangent les sons avec votre voix dans un micro virtuel, après activation explicite.
 
 ## Démarrage rapide
 
@@ -24,8 +24,8 @@ Pour compiler vous-même l’application, suivez la section [Développement et c
 
 Après compilation, dans `release/`, utilisez au choix :
 
-- `Local-Discord-Soundboard-1.1.2-x64-portable.exe` : application autonome, composants audio inclus.
-- `Local-Discord-Soundboard-1.1.2-x64-nsis.exe` : installeur Windows pour l’utilisateur courant.
+- `Local-Discord-Soundboard-1.2.0-x64-portable.exe` : application autonome, composants audio inclus.
+- `Local-Discord-Soundboard-1.2.0-x64-nsis.exe` : installeur Windows pour l’utilisateur courant.
 - `win-unpacked/Local Discord Soundboard.exe` : application décompressée. Gardez **tout le dossier** `win-unpacked` ensemble.
 
 Les noms ci-dessus correspondent aux cibles configurées ; les validations réellement réalisées sont consignées dans [docs/VALIDATION.md](docs/VALIDATION.md). Les exécutables ne sont pas signés avec un certificat commercial. Windows peut donc signaler un éditeur inconnu.
@@ -35,25 +35,41 @@ Les noms ci-dessus correspondent aux cibles configurées ; les validations réel
 3. Cliquez sur un bouton pour le jouer. Le bouton casque déclenche toujours une préécoute locale.
 4. Ouvrez les trois points du son pour lui attribuer un nom, une couleur, une icône/emoji, un volume et un raccourci.
 5. Réduisez la fenêtre, puis essayez le raccourci. **Ctrl + Alt + 0** arrête toutes les lectures par défaut.
-6. Pour diffuser dans Discord, configurez votre bot comme expliqué ci-dessous, rejoignez un salon et choisissez la destination **Discord** dans la bibliothèque.
+6. Choisissez **Micro partout** pour passer par votre micro virtuel, ou configurez votre bot, rejoignez un salon et choisissez **Bot Discord** pour le flux séparé du bot.
 
-Le volume général démarre à 70 %. Une seule lecture est autorisée par destination ; le lancement d’un nouveau son remplace normalement le précédent. Une préécoute locale peut fonctionner pendant une diffusion. **STOP arrête tous les sons**, tout en conservant votre voix si le mode jeu est actif. Le bouton **Désactiver le mode jeu** coupe aussi le mélange micro et libère le microphone. Il n’existe aucun repli silencieux vers une autre destination.
+Le volume général démarre à 70 %. Une seule lecture est autorisée par destination ; le lancement d’un nouveau son remplace normalement le précédent. Une préécoute locale peut fonctionner pendant une diffusion. **STOP arrête tous les sons**, tout en conservant votre voix si le micro virtuel est actif. Le bouton **Désactiver** du micro virtuel coupe aussi le mélange et libère le microphone. Il n’existe aucun repli silencieux vers une autre destination.
+
+## Micro partout : voix et sons dans Discord et vos jeux
+
+1. Ouvrez **Micro virtuel** et choisissez **Micro partout**. Si le composant audio manque, utilisez **Installer le composant audio** : VB-CABLE est inclus, sans téléchargement séparé. Validez l’installation Windows et redémarrez si demandé. Si le composant est installé mais désactivé, suivez le [guide de réactivation](#le-composant-est-installé-mais-désactivé-dans-windows).
+2. Choisissez **CABLE Input (VB-Audio Virtual Cable)** comme sortie vers le micro virtuel. Avec **Ajouter ma voix au micro virtuel**, sélectionnez votre vrai microphone. Choisissez votre casque pour la préécoute ; le retour des sons dans le casque est facultatif.
+3. Dans **Discord → Paramètres utilisateur → Voix & vidéo**, choisissez **CABLE Output (VB-Audio Virtual Cable)** comme périphérique d’entrée et **désactivez vous-même la suppression du bruit / Krisp**. [Aide officielle Krisp](https://support.discord.com/hc/en-us/articles/360040843952-Krisp-FAQ). La soundboard ne modifie pas le client Discord.
+4. Choisissez également **CABLE Output** comme micro dans chaque jeu ou application où vous voulez transmettre les sons. Gardez votre casque comme sortie audio.
+5. Cliquez sur **Activer Micro partout**, puis déclenchez vos sons depuis la bibliothèque ou leurs raccourcis. Votre voix et les sons passent dans le même micro ; aucun bot ni token Discord n’est nécessaire pour ce mode.
+
+Seules les applications réglées sur **CABLE Output** reçoivent ce mélange. Les touches « Appuyer pour parler », la sensibilité d’entrée et les autres filtres de chaque application restent applicables. Si un son est coupé, vérifiez aussi ces réglages. La soundboard doit rester ouverte et le micro virtuel actif pour transmettre votre voix ; après l’avoir quittée ou désactivée, reprenez votre micro habituel dans les applications concernées.
+
+**Un ami qui vous écoute à la fois dans Discord et dans le vocal du jeu entendra deux flux**, comme pour votre voix. Coupez l’un des deux vocaux. Le mode ne peut pas supprimer ce doublon entre applications.
+
+Pour une première vérification, utilisez le test micro de Discord avec un volume bas, puis faites confirmer par un autre participant que votre voix et un son sont audibles. Vérifiez que STOP arrête le son sans couper votre voix. Ces essais réels restent distincts des tests automatisés du mixeur.
 
 ## Diffuser dans les jeux, sans diffuser dans Discord
 
-1. Ouvrez **En jeu**. Si **Composant installé** apparaît, passez à l’étape suivante. Sinon, cliquez sur **Installer le composant audio**. Le pilote officiel **VB-CABLE** est inclus : l’application vérifie son intégrité, l’extrait et lance l’installation. Validez la demande administrateur Windows. Redémarrez si nécessaire puis rouvrez l’application : le composant est détecté automatiquement. Le bouton **Actualiser** permet de relancer la vérification. Aucun téléchargement séparé ni compte supplémentaire.
+1. Ouvrez **Micro virtuel → En jeu**. Si **Composant installé** apparaît, passez à l’étape suivante. Sinon, cliquez sur **Installer le composant audio**. Le pilote officiel **VB-CABLE** est inclus : l’application vérifie son intégrité, l’extrait et lance l’installation. Validez la demande administrateur Windows. Redémarrez si nécessaire puis rouvrez l’application : le composant est détecté automatiquement. Le bouton **Actualiser** permet de relancer la vérification. Aucun téléchargement séparé ni compte supplémentaire.
 2. Dans cette page, choisissez **CABLE Input (VB-Audio Virtual Cable)** comme sortie vers les jeux. Activez **Ajouter ma voix** et choisissez votre vrai micro si vous souhaitez continuer à parler dans le jeu. Choisissez votre casque pour la préécoute et, facultativement, le retour des sons.
 3. Dans les réglages vocaux du jeu, choisissez **CABLE Output (VB-Audio Virtual Cable)** comme microphone. Gardez votre casque comme sortie audio du jeu et de Windows.
 4. Dans Discord, sélectionnez **explicitement votre vrai microphone**, pas « Par défaut » ni CABLE Output. Krisp peut rester activé.
-5. Cliquez sur **Activer le mode jeu**, puis choisissez la destination **En jeu** dans la bibliothèque. Les boutons et raccourcis envoient les sons dans le jeu ; le bot Discord reste silencieux. **Jeu + Discord** envoie aux deux destinations et nécessite que le bot soit prêt.
+5. Cliquez sur **Activer le mode jeu**, puis choisissez la destination **En jeu** dans la bibliothèque. Les boutons et raccourcis envoient les sons dans le micro virtuel ; le bot Discord reste silencieux.
+
+**Changer de mode dans la soundboard ne change pas les entrées des autres applications.** Si Discord utilise encore CABLE Output après un passage par Micro partout, il recevra toujours les sons. Reprenez votre vrai micro dans les paramètres Discord pour les réserver au jeu.
 
 Le mode jeu convient aux applications et jeux Windows qui acceptent un périphérique d’entrée audio. Il faut sélectionner ce micro dans chaque jeu ; les réglages du jeu et sa touche « Appuyer pour parler » restent applicables. La soundboard ne simule pas cette touche et n’injecte rien dans le jeu. Une compatibilité avec tous les jeux ou tous les anticheats n’est pas garantie.
 
-L’activation n’est pas restaurée automatiquement au lancement : vos choix de périphériques sont mémorisés, votre micro reste fermé jusqu’à activation. Changer de périphérique, passer à Discord/écoute locale, ou désactiver le mode jeu libère le micro. Un débranchement arrête la diffusion sans choisir un autre appareil. Si le câble devient la sortie Windows par défaut, remettez votre casque comme sortie Windows avant d’activer le mode jeu. Le retour casque contient les sons uniquement, jamais votre propre voix. Le volume général et le volume de chaque son agissent sur les sons ; votre voix possède son propre volume.
+Dans les deux modes, l’activation n’est pas restaurée automatiquement au lancement : vos choix de périphériques sont mémorisés, votre micro reste fermé jusqu’à activation. Changer de périphérique ou de destination, y compris entre En jeu et Micro partout, ou désactiver le micro virtuel libère le micro. Un débranchement arrête la diffusion sans choisir un autre appareil. Si le câble devient la sortie Windows par défaut, remettez votre casque comme sortie Windows avant l’activation. Le retour casque contient les sons uniquement, jamais votre propre voix. Le volume général et le volume de chaque son agissent sur les sons ; votre voix possède son propre volume.
 
-**VB-CABLE est un composant tiers de VB-Audio, en donationware ; tous les dons sont les bienvenus.** [Site officiel](https://vb-audio.com/Cable/), [licence et autorisation de distribution](https://vb-audio.com/Services/licensing.htm), [soutenir l’auteur](https://shop.vb-audio.com/en/win-apps/11-vb-cable.html). L’installation du pilote est facultative pour Discord et l’écoute locale. Même en version portable, ce pilote est installé dans Windows. Il n’est pas désinstallé avec la soundboard, car d’autres applications peuvent l’utiliser.
+**VB-CABLE est un composant tiers de VB-Audio, en donationware ; tous les dons sont les bienvenus.** [Site officiel](https://vb-audio.com/Cable/), [licence et autorisation de distribution](https://vb-audio.com/Services/licensing.htm), [soutenir l’auteur](https://shop.vb-audio.com/en/win-apps/11-vb-cable.html). Le pilote n’est pas nécessaire en mode **Bot Discord** ou **Écoute locale**. Même en version portable, ce pilote est installé dans Windows. Il n’est pas désinstallé avec la soundboard, car d’autres applications peuvent l’utiliser.
 
-La mise à jour conserve les sons, profils et paramètres, migre la configuration au format 2 et garde une copie du format 1. Ne réutilisez pas l’ancienne version 1.0 avec cette configuration migrée.
+La mise à jour conserve les sons, profils et paramètres, migre la configuration au **format 3** et garde une copie datée du fichier de format 1 ou 2. L’ancienne destination « Jeu + Discord » devient « En jeu » ; choisissez explicitement « Micro partout » pour utiliser le nouveau mode. Les versions 1.0 et 1.1 ne peuvent pas lire cette configuration migrée.
 
 ### Le composant est installé mais désactivé dans Windows
 
@@ -67,7 +83,7 @@ Si l’installation reste demandée après un redémarrage avec une ancienne ver
 
 ## Prérequis
 
-Pour les exécutables distribués : Windows 10 ou 11, architecture x64. Connexion Internet pour Discord uniquement ; l’usage local fonctionne hors ligne après installation. Le bot doit être invité sur un serveur que vous pouvez gérer, ou par une personne disposant des permissions nécessaires.
+Pour les exécutables distribués : Windows 10 ou 11, architecture x64. Connexion Internet pour Discord uniquement ; l’usage local fonctionne hors ligne après installation. En mode **Bot Discord**, le bot doit être invité sur un serveur que vous pouvez gérer, ou par une personne disposant des permissions nécessaires. **Micro partout** utilise l’entrée micro de vos applications, sans bot.
 
 Pour développer : Node.js **24.17.0 ou plus récent**, npm et Windows x64. Les composants audio et Electron sont téléchargés pendant l’installation des dépendances, puis intégrés aux exécutables. Aucun compilateur C++, VoiceMeeter, OBS, hébergement, abonnement ou compte sur un service supplémentaire n’est nécessaire. Le câble virtuel utile aux jeux est inclus et installé depuis l’application.
 
@@ -96,7 +112,7 @@ npm run dist           # Version portable + installeur NSIS
 
 La génération crée `dist/` et `release/`. FFmpeg et ses notices résident dans `vendor/ffmpeg/`, généré par le script d’installation. Ne supprimez pas les ressources à côté de l’exécutable décompressé. Le script de distribution n’effectue aucune publication et ne configure aucune mise à jour automatique.
 
-Les tests de bureau créent un dossier distinct dans `.test-data/`, utilisent des sons synthétiques et un faux token, et mettent les haut-parleurs du rendu en sourdine. Ils ne se connectent pas à Discord. Ils envoient brièvement **Ctrl+Alt+9** et **Ctrl+Alt+0** par l’API Windows pour vérifier les raccourcis enregistrés. Lancez-les dans une session Windows interactive. Les rapports et captures sont dans `test-results/`.
+Les tests de bureau créent un dossier distinct dans `.test-data/`, utilisent des sons synthétiques et un faux token, et mettent les haut-parleurs du rendu en sourdine. Ils ne se connectent pas à Discord. La suite générale envoie brièvement **Ctrl+Alt+9** et **Ctrl+Alt+0** par l’API Windows ; `game-smoke.mjs` utilise **Ctrl+Alt+F9** et **Ctrl+Alt+F10**, après vérification de leur enregistrement. Lancez-les dans une session Windows interactive. Les rapports et captures sont dans `test-results/`.
 
 Pour tester une application empaquetée :
 
@@ -141,7 +157,7 @@ Il faut disposer des permissions nécessaires pour ajouter une application au se
 3. Cliquez sur **Connecter**. Le nom du bot et les serveurs accessibles apparaissent.
 4. Choisissez un serveur et un salon vocal classique. Le bouton d’actualisation recharge les salons et leurs permissions.
 5. Cliquez sur **Rejoindre le salon**. Attendez l’indication de connexion.
-6. Revenez à la bibliothèque et sélectionnez la destination **Discord**. Un clic ou un raccourci envoie alors le son au bot.
+6. Revenez à la bibliothèque et sélectionnez la destination **Bot Discord**. Un clic ou un raccourci envoie alors le son au bot.
 
 La connexion au bot est volontaire à chaque démarrage ; enregistrer un token ne connecte pas automatiquement le compte. Les listes de serveurs et salons ne sont obtenues que par l’API officielle du bot.
 
@@ -149,9 +165,9 @@ La connexion au bot est volontaire à chaque démarrage ; enregistrer un token n
 
 Discord exige DAVE pour les appels vocaux chiffrés. La pile fixée dans ce projet comprend **discord.js 14.27.0**, **@discordjs/voice 0.19.2** et **@snazzah/davey 0.1.12**. Les connexions sont créées explicitement avec `daveEncryption: true`. Le binaire natif Windows de DAVE est inclus et extrait du paquet Electron pour être chargé correctement.
 
-La préécoute passe par la sortie audio Windows habituelle. La diffusion passe par un processus de décodage FFmpeg → PCM 48 kHz stéréo → réglage du volume → Opus → connexion vocale du bot. Tout le moteur Discord et l’encodage Opus s’exécutent dans un worker séparé de l’interface et du processus principal.
+La préécoute passe par le casque sélectionné dans **Micro virtuel**, exigé lorsque le pilote virtuel est installé ; sinon elle peut utiliser la sortie Windows habituelle. En mode **Bot Discord**, la diffusion passe par un processus de décodage FFmpeg → PCM 48 kHz stéréo → réglage du volume → Opus → connexion vocale du bot. Tout le moteur Discord et l’encodage Opus s’exécutent dans un worker séparé de l’interface et du processus principal.
 
-Le bot se connecte avec `selfDeaf: true` et `selfMute: false`. Il n’enregistre ni n’analyse la voix des participants. L’accès au microphone est refusé par défaut. Seule l’interface locale peut obtenir un accès audio lors de la détection des appareils ou de l’activation du mode jeu ; la caméra et la capture d’écran restent refusées. Votre compte Discord et son réglage Krisp restent indépendants.
+Le bot se connecte avec `selfDeaf: true` et `selfMute: false`. Il n’enregistre ni n’analyse la voix des participants. L’accès au microphone est refusé par défaut. Seule l’interface locale peut obtenir un accès audio lors de la détection des appareils ou de l’activation du micro virtuel ; la caméra et la capture d’écran restent refusées. Le mode **Bot Discord** laisse votre micro personnel et Krisp indépendants. En **Micro partout**, vous sélectionnez le micro virtuel et désactivez vous-même Krisp dans Discord.
 
 La présence du module DAVE et la génération d’un paquet de clés peuvent être testées localement. **Cela ne valide pas la négociation avec un vrai serveur vocal** : voir les essais manuels ci-dessous. Références : [documentation @discordjs/voice](https://discord.js.org/docs/packages/voice/0.19.2), [annonce officielle DAVE](https://discord.com/blog/bringing-dave-to-all-discord-platforms).
 
@@ -209,7 +225,7 @@ Pour des essais isolés, `SOUNDBOARD_DATA_DIR` peut désigner un chemin absolu d
 
 1. Rejoignez un salon avec votre compte personnel, conservez Krisp activé et choisissez votre microphone habituel.
 2. Connectez le bot depuis la soundboard, puis faites-le rejoindre le même salon.
-3. Réglez d’abord le volume général bas. Sélectionnez **Discord**, cliquez sur un son et faites confirmer son audibilité par un autre participant.
+3. Réglez d’abord le volume général bas. Sélectionnez **Bot Discord**, cliquez sur un son et faites confirmer son audibilité par un autre participant.
 4. Vérifiez que c’est le bot qui indique une activité vocale. Parlez simultanément : votre propre micro doit toujours fonctionner.
 5. Réduisez la soundboard, utilisez son raccourci, puis le raccourci STOP.
 6. Testez deux sons lancés rapidement, le mode sans remplacement et les deux réglages de volume.
@@ -228,7 +244,9 @@ Les événements d’interface, les simulations et les essais de codecs ne prouv
 | Aucun serveur | Inviter le bot sur le serveur avec les permissions nécessaires. |
 | Salon grisé ou inaccessible | Vérifier Voir le salon, Se connecter, Parler et les dérogations du salon. Seuls les salons vocaux classiques sont listés. |
 | Connexion vocale impossible | Vérifier Internet, pare-feu/VPN et les communications UDP de Discord. Ne pas désactiver les protections globales du PC. |
-| Bot présent mais muet | Choisir la destination Discord ; vérifier les volumes, le mute serveur, la sourdine du participant et la permission Parler. |
+| Bot présent mais muet | Choisir la destination Bot Discord ; vérifier les volumes, le mute serveur, la sourdine du participant et la permission Parler. |
+| Sons filtrés en Micro partout | Choisir CABLE Output dans l’application destinataire ; désactiver manuellement Krisp/suppression du bruit, puis vérifier sensibilité, autres filtres et touche pour parler. |
+| Sons entendus deux fois | Un auditeur reçoit peut-être Discord et le vocal du jeu en même temps : couper l’un des deux vocaux. |
 | Préécoute impossible | Vérifier le fichier ; certains WAV utilisant des codecs inhabituels ne sont pas décodés par Chromium. Réexporter en WAV PCM, MP3 ou OGG Vorbis. |
 | Raccourci refusé | Choisir une autre combinaison et contrôler la liste dans Paramètres. |
 | Raccourci inactif dans un jeu | Le jeu peut réserver la combinaison, gérer le plein écran exclusif différemment ou fonctionner avec d’autres privilèges. Essayer une autre combinaison ou le mode fenêtré sans bordures. |
@@ -236,7 +254,7 @@ Les événements d’interface, les simulations et les essais de codecs ne prouv
 
 **Valorant/Vanguard :** utilisation exclusive d’Electron `globalShortcut` et des mécanismes Windows normaux. Aucune injection, aucun hook de jeu, aucun contournement d’anti-cheat. Le fonctionnement dans tous les jeux n’est pas garanti ; la validation dans Valorant doit être réalisée séparément des tests Windows de bureau.
 
-Version actuelle : un flux Discord, une préécoute locale, pas de mixage, boucle, normalisation, lecture aléatoire, historique, image de bouton importée ou export/import de profils. Les boutons acceptent des icônes/emoji. Les groupes et appels privés Discord, les scènes, Linux, macOS et ARM ne font pas partie de cette distribution. Le worker audio constitue le point d’extension pour un futur mixeur.
+Version actuelle : un son à la fois par destination, mélange voix + son dans le micro virtuel, un flux de bot Discord et une préécoute locale. Pas de mixage de plusieurs sons simultanés, boucle, normalisation, lecture aléatoire, historique, image de bouton importée ou export/import de profils. Les boutons acceptent des icônes/emoji. Le bot ne rejoint pas les groupes et appels privés Discord ni les scènes ; Micro partout passe par votre entrée micro et dépend des options de chaque application. Linux, macOS et ARM ne font pas partie de cette distribution.
 
 ## Architecture
 

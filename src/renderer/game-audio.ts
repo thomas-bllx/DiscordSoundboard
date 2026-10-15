@@ -59,7 +59,7 @@ export class GameAudio {
       });
       context.addEventListener("error", () => {
         void this.fail(
-          "Le périphérique audio ne répond plus. Réactivez le mode jeu.",
+          "Le périphérique audio ne répond plus. Réactivez le micro virtuel.",
         );
       });
       this.mix = context.createDynamicsCompressor();
@@ -93,7 +93,7 @@ export class GameAudio {
           track.addEventListener("ended", () => {
             if (this.active)
               void this.fail(
-                "Microphone débranché. Réactivez le mode jeu après reconnexion.",
+                "Microphone débranché. Réactivez le micro virtuel après reconnexion.",
               );
           }),
         );
@@ -123,7 +123,7 @@ export class GameAudio {
       await this.fail(
         error instanceof Error
           ? error.message
-          : "Impossible d’activer l’audio en jeu.",
+          : "Impossible d’activer le micro virtuel.",
       );
     }
   }
@@ -147,7 +147,7 @@ export class GameAudio {
     const id = event.requestId;
     try {
       if (!this.active || !this.context || !this.pads || !this.settings)
-        throw new Error("Le mode jeu est désactivé.");
+        throw new Error("Le micro virtuel est désactivé.");
       validateGameDevices(
         this.settings,
         await navigator.mediaDevices.enumerateDevices(),
@@ -178,7 +178,7 @@ export class GameAudio {
       this.resetSound();
       await this.api.reportGame(id, "error");
       await this.fail(
-        error instanceof Error ? error.message : "Lecture en jeu impossible.",
+        error instanceof Error ? error.message : "Lecture vers le micro virtuel impossible.",
       );
     }
   }

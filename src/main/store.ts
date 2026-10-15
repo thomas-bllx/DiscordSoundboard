@@ -55,7 +55,8 @@ export class ConfigStore {
         typeof raw === "object" &&
         "version" in raw &&
         raw.version !== 1 &&
-        raw.version !== 2
+        raw.version !== 2 &&
+        raw.version !== 3
       ) {
         throw new UserError(
           "Cette bibliothèque vient d’une autre version. Utilisez une version compatible de l’application.",
@@ -63,9 +64,13 @@ export class ConfigStore {
       }
       this.config = readConfig(raw);
       validateShortcuts(this.config);
-      if ((raw as { version?: number }).version === 1) {
-        await copyFile(this.file, `${this.file}.v1-${Date.now()}.bak`);
+      const previous = raw as { version?: number; settings?: { output?: string } };
+      if (previous.version === 1 || previous.version === 2) {
+        await copyFile(this.file, `${this.file}.v${previous.version}-${Date.now()}.bak`);
         await atomicWrite(this.file, JSON.stringify(this.config, null, 2));
+        if (previous.settings?.output === "both")
+          this.warning =
+            "L’ancien mode « Jeu + Discord » est maintenant réglé sur « En jeu ». Choisissez « Micro partout » pour utiliser le micro virtuel dans Discord, sans bot.";
       }
     } catch (error) {
       if (

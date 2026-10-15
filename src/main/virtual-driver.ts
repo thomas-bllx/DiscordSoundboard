@@ -56,7 +56,7 @@ export class VirtualDriver {
       case "present":
         return this.set(
           "installed",
-          "VB-CABLE est disponible. Choisissez CABLE Output comme micro dans votre jeu.",
+          "VB-CABLE est disponible. Choisissez CABLE Output comme micro dans l’application souhaitée.",
         );
       case "disabled":
         return this.set(

@@ -1,5 +1,19 @@
 # Validation des versions Windows
 
+## Version 1.2.0 — Micro partout
+
+- Vérification TypeScript et **78 tests automatisés réussis** le 15 octobre 2026.
+- Migration des formats 1 et 2 vers le format 3 : sons et réglages conservés, copie exacte du fichier original gardée, ancienne destination « Jeu + Discord » convertie en « En jeu ». La nouvelle destination Micro partout persiste ; l’ancienne valeur est refusée dans le format 3.
+- Essais Electron avec le vrai décodeur et mixeur Web Audio, sorties simulées silencieuses et microphone artificiel Chromium : voix et sons mesurés dans le micro virtuel, volumes indépendants, préécoute séparée, bot hors ligne et silencieux.
+- Choix de Micro partout sans capture immédiate ; activation explicite nécessaire. STOP coupe les sons et conserve la voix. Changement de destination, y compris Micro partout → En jeu, libérant la piste micro.
+- Réouverture avec Micro partout et ses réglages conservés, mais micro virtuel désactivé et accès au microphone refusé jusqu’à une nouvelle activation. Caméra toujours refusée.
+- Débranchement simulé du câble arrêtant le mixeur sans repli vers une sortie par défaut. Micro absent du retour casque, qui reçoit seulement les sons.
+- Raccourcis globaux Ctrl+Alt+F9 et STOP Ctrl+Alt+F10 vérifiés avec fenêtre réduite, dans un profil de test isolé.
+- Page Micro virtuel vérifiée à 1280 × 840 et 900 × 640, sans débordement horizontal ni erreur React. Guide de sélection de CABLE Output et de désactivation manuelle de Krisp présent.
+- Détection Windows réelle : VB-CABLE disponible lors de ces essais. Aucune nouvelle installation ni modification des appareils par défaut.
+
+Ces tests ne capturent aucun microphone personnel et n’utilisent pas le client Discord. Le choix de CABLE Output dans les applications, la désactivation manuelle de Krisp et l’audibilité par un autre participant restent à vérifier en conversation réelle. Les deux modes virtuels partagent le même câble : changer de mode ne change pas le microphone sélectionné dans Discord ou les jeux, et ne supprime pas un doublon chez un auditeur présent dans deux vocaux.
+
 ## Version 1.1.2 — détection de VB-CABLE
 
 - Vérification TypeScript et **73 tests automatisés réussis** le 15 octobre 2026.

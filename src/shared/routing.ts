@@ -3,8 +3,8 @@ import type { Settings } from "./model";
 export function destinations(output: Settings["output"], preview = false) {
   return {
     local: preview || output === "local",
-    discord: !preview && (output === "discord" || output === "both"),
-    game: !preview && (output === "game" || output === "both"),
+    discord: !preview && output === "discord",
+    game: !preview && (output === "game" || output === "micro"),
   };
 }
 
@@ -26,7 +26,7 @@ export function validateGameDevices(
   );
   if (defaultOutput && isCableInput(defaultOutput.label))
     throw new Error(
-      "CABLE Input est la sortie Windows par défaut. Choisissez votre casque dans les paramètres audio Windows pour éviter d’envoyer tous les sons du PC dans le jeu.",
+      "CABLE Input est la sortie Windows par défaut. Choisissez votre casque dans les paramètres audio Windows pour éviter d’envoyer tous les sons du PC dans le micro virtuel.",
     );
   const output = devices.find(
     (d) => d.kind === "audiooutput" && d.deviceId === settings.gameOutputId,
@@ -50,7 +50,7 @@ export function validateGameDevices(
       isVirtualDevice(mic.label)
     )
       throw new Error(
-        "Sélectionnez votre vrai microphone dans les réglages En jeu.",
+        "Sélectionnez votre vrai microphone dans la page Micro virtuel.",
       );
   }
   if (settings.gameMonitorEnabled) {

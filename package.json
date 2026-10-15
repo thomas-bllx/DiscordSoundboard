@@ -1,7 +1,7 @@
 {
   "name": "local-discord-soundboard",
   "productName": "Local Discord Soundboard",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Soundboard locale Windows avec bot Discord indépendant du microphone.",
   "author": "Local Discord Soundboard contributors",
   "license": "MIT",

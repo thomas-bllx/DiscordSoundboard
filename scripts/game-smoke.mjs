@@ -12,7 +12,7 @@ const fixture = join(data, "Soundboard test.wav");
 await writeFile(fixture, testWav(12));
 const env = { ...process.env, SOUNDBOARD_DATA_DIR: data };
 delete env.ELECTRON_RUN_AS_NODE;
-const desktop = await electron.launch({
+const launchOptions = {
   ...(process.env.SOUNDBOARD_TEST_EXE
     ? {
         executablePath: process.env.SOUNDBOARD_TEST_EXE,
@@ -31,8 +31,9 @@ const desktop = await electron.launch({
   cwd: resolve("."),
   env,
   timeout: 30_000,
-});
-const page = await desktop.firstWindow();
+};
+let desktop = await electron.launch(launchOptions);
+let page = await desktop.firstWindow();
 const errors = [];
 const results = [];
 page.on("pageerror", (error) => errors.push(error.message));
@@ -78,7 +79,7 @@ try {
   results.push("Microphone refusé par défaut, aucune capture au démarrage");
   await page
     .getByRole("navigation")
-    .getByRole("button", { name: "En jeu", exact: true })
+    .getByRole("button", { name: "Micro virtuel", exact: true })
     .click();
   await expect
     .poll(async () => (await state()).driver.status)
@@ -98,7 +99,7 @@ try {
     BrowserWindow.getAllWindows()[0].setSize(1280, 840),
   );
   results.push(
-    "Page En jeu utilisable à 900 × 640 ; état du pilote Windows lu sans installation",
+    "Page Micro virtuel utilisable à 900 × 640 ; état du pilote Windows lu sans installation",
   );
 
   // Replace only device adapters. Audio files, decoder, gains, compressor and IPC stay real.
@@ -200,6 +201,7 @@ try {
   await expect
     .poll(async () => (await state()).config.settings.gameOutputId)
     .toBe("test-cable");
+  await invoke("updateSettings", { gameMonitorId: "test-headset" });
   await page
     .getByRole("button", { name: "Activer le mode jeu", exact: true })
     .click();
@@ -234,14 +236,46 @@ try {
   expect(await level()).toBeLessThan(0.0001);
   await invoke("stop");
   results.push("Préécoute locale isolée du circuit de diffusion en jeu");
-  await invoke("updateSettings", { output: "both" });
-  const both = await page.evaluate((id) => window.soundboard.play(id), id);
-  expect(both.ok).toBe(false);
-  expect((await state()).game.status).toBe("idle");
-  results.push(
-    "Jeu + Discord refusé avant toute lecture lorsque le bot est indisponible",
-  );
-  await invoke("updateSettings", { output: "game" });
+  // Select the new mode through the UI: prepare voice mixing, but require activation.
+  await page.getByRole("group", { name: "Utilisation du micro virtuel" }).getByRole("button", { name: "Micro partout", exact: true }).click();
+  await expect.poll(async () => (await state()).config.settings.output).toBe("micro");
+  expect((await state()).config.settings.gameMicEnabled).toBe(true);
+  await expect.poll(async () => (await state()).gameSession.status).toBe("off");
+  expect(await page.evaluate(() => !!window.__testMic)).toBe(false);
+  const notActive = await page.evaluate((id) => window.soundboard.play(id), id);
+  expect(notActive.ok).toBe(false);
+  expect(notActive.error).toContain("Activez le micro virtuel");
+  await invoke("updateSettings", { gameMicrophoneId: "test-mic" });
+  await page.getByRole("button", { name: "Activer Micro partout", exact: true }).click();
+  await expect.poll(async () => (await state()).gameSession.status).toBe("ready");
+  expect(await page.evaluate(() => window.__testMic.readyState)).toBe("live");
+  await expect.poll(level).toBeGreaterThan(0.005);
+  await expect(page.getByText(/désactivez vous-même la suppression du bruit/)).toBeVisible();
+  expect((await state()).discord.status).toBe("offline");
+  await invoke("updateSettings", { gameMicVolume: 0 });
+  await expect.poll(level).toBeLessThan(0.0001);
+  await invoke("play", id);
+  await expect.poll(level).toBeGreaterThan(0.005);
+  expect((await state()).broadcast.status).toBe("idle");
+  expect((await state()).local.status).toBe("idle");
+  await invoke("stop");
+  await expect.poll(level).toBeLessThan(0.0001);
+  await invoke("updateSettings", { gameMicVolume: 0.8 });
+  await expect.poll(level).toBeGreaterThan(0.005);
+  results.push("Micro partout : activation explicite, voix et sons mesurés, volumes indépendants, STOP conserve la voix, bot hors ligne et silencieux");
+  await page.screenshot({ path: "test-results/09-micro-everywhere.png" });
+  await desktop.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setSize(900, 640));
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  await page.screenshot({ path: "test-results/09-micro-everywhere-small.png" });
+  await page.getByRole("heading", { name: "3. Choisir le micro dans vos applications" }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "test-results/09-micro-guide.png" });
+  await desktop.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setSize(1280, 840));
+  await invoke("updateSettings", { output: "game", gameMicEnabled: false });
+  await expect.poll(async () => (await state()).gameSession.status).toBe("off");
+  expect(await page.evaluate(() => window.__testMic.readyState)).toBe("ended");
+  results.push("Changer de mode libère le micro même entre Micro partout et En jeu");
+  await page.getByRole("button", { name: "Activer le mode jeu", exact: true }).click();
+  await expect.poll(async () => (await state()).gameSession.status).toBe("ready");
   await invoke("play", id);
   await expect.poll(level).toBeGreaterThan(0.005);
   await page.evaluate(() => {
@@ -315,6 +349,28 @@ try {
   results.push(
     "Capture du micro artificiel uniquement après activation ; passage à Discord libère la piste micro",
   );
+  await invoke("updateSettings", { output: "micro" });
+  await desktop.close();
+  desktop = await electron.launch(launchOptions);
+  page = await desktop.firstWindow();
+  page.on("pageerror", (error) => errors.push(error.message));
+  await expect(page.getByRole("heading", { name: "Votre bibliothèque de sons." })).toBeVisible();
+  expect((await state()).config.settings).toMatchObject({ output: "micro", gameMicEnabled: true, gameMicrophoneId: "test-mic" });
+  expect((await state()).gameSession.status).toBe("off");
+  expect((await state()).broadcast.status).toBe("idle");
+  await expect(page.getByRole("group", { name: "Destination de lecture" }).getByRole("button", { name: "Micro partout", exact: true })).toHaveClass("selected");
+  await expect(page.getByRole("button", { name: "Jeu + Discord", exact: true })).toHaveCount(0);
+  await desktop.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setSize(900, 640));
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  await page.screenshot({ path: "test-results/09-micro-library-small.png" });
+  expect(await page.evaluate(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      return false;
+    } catch { return true; }
+  })).toBe(true);
+  results.push("Après réouverture : Micro partout et ses réglages sont conservés, mais capture micro et diffusion restent désactivées");
   expect(errors).toEqual([]);
   const report = {
     date: new Date().toISOString(),
@@ -337,5 +393,5 @@ try {
   await page.screenshot({ path: "test-results/game-error.png" });
   throw error;
 } finally {
-  await desktop.close();
+  await desktop.close().catch(() => {});
 }

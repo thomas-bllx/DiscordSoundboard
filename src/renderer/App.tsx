@@ -28,6 +28,7 @@ import {
   Play,
   ShieldCheck,
   Gamepad2,
+  Mic,
 } from "lucide-react";
 import type { AppState, Result, Sound, Settings } from "../shared/model";
 import { PreviewPlayer } from "./audio";
@@ -237,8 +238,8 @@ export function App() {
             className={page === "game" ? "nav active" : "nav"}
             onClick={() => setPage("game")}
           >
-            <Gamepad2 size={19} />
-            En jeu
+            <Mic size={19} />
+            Micro virtuel
             {state.gameSession.status === "ready" && (
               <i className="dot green" />
             )}
@@ -294,12 +295,14 @@ export function App() {
             <p>
               {discord.voice === "ready"
                 ? discord.channelName
-                : "Connectez votre bot pour diffuser dans Discord."}
+                : config.settings.output === "micro"
+                  ? "Micro partout utilise votre micro virtuel, sans bot."
+                  : "Connectez votre bot pour utiliser le mode Bot Discord."}
             </p>
             <button onClick={() => setPage("discord")}>
               {discord.voice === "ready"
                 ? "Gérer la connexion"
-                : "Configurer Discord"}
+                : "Configurer le bot"}
               <ArrowUpRight size={15} />
             </button>
           </div>
@@ -319,7 +322,7 @@ export function App() {
                 : page === "discord"
                   ? "Discord"
                   : page === "game"
-                    ? "En jeu"
+                    ? "Micro virtuel"
                     : "Paramètres"}
             </span>
           </div>
@@ -386,8 +389,8 @@ export function App() {
                       {
                         local: "Audible sur ce PC uniquement",
                         discord: "Diffusion par le bot, micro indépendant",
-                        game: "Vocal du jeu uniquement · bot silencieux",
-                        both: "Vocal du jeu et bot Discord",
+                        game: "Micro virtuel du jeu · bot silencieux",
+                        micro: "Voix et sons via votre micro virtuel · sans bot",
                       }[config.settings.output]
                     }
                   </small>
@@ -413,7 +416,7 @@ export function App() {
                     onClick={() => updateSettings({ output: "discord" })}
                   >
                     <Radio size={16} />
-                    Discord
+                    Bot Discord
                     <i
                       className={`dot ${discord.voice === "ready" ? "green" : ""}`}
                     />
@@ -432,11 +435,13 @@ export function App() {
                   </button>
                   <button
                     className={
-                      config.settings.output === "both" ? "selected" : ""
+                      config.settings.output === "micro" ? "selected" : ""
                     }
-                    onClick={() => updateSettings({ output: "both" })}
+                    onClick={() => updateSettings({ output: "micro" })}
                   >
-                    Jeu + Discord
+                    <Mic size={16} />
+                    Micro partout
+                    <i className={`dot ${config.settings.output === "micro" && state.gameSession.status === "ready" ? "green" : ""}`} />
                   </button>
                 </div>
               </div>
@@ -452,15 +457,27 @@ export function App() {
               )}
               {route.game && state.gameSession.status !== "ready" && (
                 <div className="banner">
-                  <Gamepad2 size={17} />
+                  <Mic size={17} />
                   <span>
-                    Configurez et activez l’audio en jeu avant de diffuser.
+                    Configurez et activez le micro virtuel avant de diffuser.
                   </span>
                   <button onClick={() => setPage("game")}>
-                    Configurer le mode jeu
+                    Configurer le micro virtuel
                     <ArrowUpRight size={14} />
                   </button>
                 </div>
+              )}
+              {config.settings.output === "micro" && (
+                <p className="hint">
+                  Dans Discord et vos jeux, choisissez CABLE Output comme micro.
+                  Désactivez vous-même Krisp dans Discord. Le bot reste silencieux.
+                </p>
+              )}
+              {config.settings.output === "game" && (
+                <p className="hint">
+                  Dans le jeu : CABLE Output. Dans Discord : votre micro habituel.
+                  Si Discord utilise encore CABLE Output, il recevra aussi les sons.
+                </p>
               )}
               <div className="library-toolbar">
                 <div className="profile-title">
@@ -697,8 +714,8 @@ export function App() {
                 : playing.status === "loading"
                   ? "CHARGEMENT"
                   : route.game
-                    ? config.settings.output === "both"
-                      ? "EN JEU + DISCORD"
+                    ? config.settings.output === "micro"
+                      ? "EN DIFFUSION DANS LE MICRO"
                       : "EN DIFFUSION DANS LE JEU"
                     : route.discord
                       ? "EN DIFFUSION SUR DISCORD"

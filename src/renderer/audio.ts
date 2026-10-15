@@ -40,7 +40,7 @@ export class PreviewPlayer {
           throw new Error("Casque indisponible");
         await audio.setSinkId(this.headsetId);
       } else if (this.requireHeadset)
-        throw new Error("Choisissez votre casque dans En jeu");
+        throw new Error("Choisissez votre casque dans Micro virtuel");
       if (this.audio === audio && this.generation === event.requestId)
         await audio.play();
     })().catch(() => report("error"));

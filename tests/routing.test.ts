@@ -3,18 +3,18 @@ import { defaultConfig, readConfig } from "../src/shared/model";
 import { destinations, validateGameDevices } from "../src/shared/routing";
 
 describe("séparation du vocal jeu et du bot Discord", () => {
-  it("never sends game-only sounds to Discord and keeps preview local for every route", () => {
+  it("never sends virtual microphone sounds to the Discord bot and keeps preview local for every route", () => {
     expect(destinations("game")).toEqual({
       local: false,
       discord: false,
       game: true,
     });
-    expect(destinations("both")).toEqual({
+    expect(destinations("micro")).toEqual({
       local: false,
-      discord: true,
+      discord: false,
       game: true,
     });
-    for (const output of ["local", "discord", "game", "both"] as const)
+    for (const output of ["local", "discord", "game", "micro"] as const)
       expect(destinations(output, true)).toEqual({
         local: true,
         discord: false,
@@ -118,10 +118,17 @@ describe("séparation du vocal jeu et du bot Discord", () => {
     };
     old.settings.output = "discord";
     const migrated = readConfig(old);
-    expect(migrated.version).toBe(2);
+    expect(migrated.version).toBe(3);
     expect(migrated.profiles).toEqual(old.profiles);
     expect(migrated.settings.output).toBe("discord");
     expect(migrated.settings.gameMicEnabled).toBe(false);
     expect(migrated.settings.gameOutputId).toBe("");
+  });
+  it.each(["local", "discord", "game"] as const)("preserves the previous %s destination during migration", (output) => {
+    const config = defaultConfig();
+    config.settings.output = output;
+    const migrated = readConfig({ ...config, version: 2 });
+    expect(migrated.settings).toEqual(config.settings);
+    expect(migrated.version).toBe(3);
   });
 });

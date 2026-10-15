@@ -33,6 +33,7 @@ export function GamePanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const settings = state.config.settings;
+  const everywhere = settings.output === "micro";
   const active = state.gameSession.status === "ready";
   const pending = state.gameSession.status === "starting";
   const outputs = devices.filter(
@@ -92,7 +93,7 @@ export function GamePanel({
     try {
       if (active) await audio.stop();
       else {
-        const output = settings.output === "both" ? "both" : "game";
+        const output = everywhere ? "micro" : "game";
         const result = await api.updateSettings({ output });
         if (!result.ok) {
           setError(result.error);
@@ -108,25 +109,38 @@ export function GamePanel({
     <>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">UN MICRO POUR VOS JEUX</p>
+          <p className="eyebrow">VOTRE VOIX ET VOS SONS</p>
           <h1>
             Faites entendre vos sons<span className="mint">.</span>
           </h1>
           <p>
-            Une seule configuration pour les jeux qui permettent de choisir leur
-            microphone.
+            Un micro virtuel à sélectionner dans vos jeux et applications.
           </p>
         </div>
       </div>
+      <div className="route-bar">
+        <div className="route-label">
+          <span>UTILISATION DU MICRO</span>
+          <small>{everywhere ? "Discord, jeux et autres applications · sans bot" : "Vocal du jeu · micro Discord indépendant"}</small>
+        </div>
+        <div className="segmented" role="group" aria-label="Utilisation du micro virtuel">
+          <button className={!everywhere ? "selected" : ""} disabled={unavailable} onClick={() => update({ output: "game" })}>
+            <Gamepad2 size={16} /> En jeu
+          </button>
+          <button className={everywhere ? "selected" : ""} disabled={unavailable} onClick={() => update({ output: "micro" })}>
+            <Mic size={16} /> Micro partout
+          </button>
+        </div>
+      </div>
       <div className={`game-session ${active ? "ready" : ""}`}>
-        <Gamepad2 size={28} />
+        <Mic size={28} />
         <div>
           <strong>
             {active
-              ? "Audio en jeu actif"
+              ? everywhere ? "Micro partout actif" : "Audio en jeu actif"
               : pending
                 ? "Activation…"
-                : "Audio en jeu désactivé"}
+                : everywhere ? "Micro partout désactivé" : "Audio en jeu désactivé"}
           </strong>
           <span>
             {active
@@ -142,7 +156,9 @@ export function GamePanel({
           disabled={unavailable || !audio || !settings.gameOutputId}
         >
           <Power size={17} />
-          {active ? "Désactiver le mode jeu" : "Activer le mode jeu"}
+          {everywhere
+            ? active ? "Désactiver Micro partout" : "Activer Micro partout"
+            : active ? "Désactiver le mode jeu" : "Activer le mode jeu"}
         </button>
       </div>
       {(error || state.gameSession.error) && (
@@ -263,7 +279,7 @@ export function GamePanel({
             <h2>2. Votre voix et vos sons</h2>
           </div>
           <label className="field">
-            Sortie vers les jeux
+            Sortie vers le micro virtuel
             <select
               value={settings.gameOutputId}
               disabled={unavailable}
@@ -284,8 +300,8 @@ export function GamePanel({
             </select>
           </label>
           <Toggle
-            label="Ajouter ma voix dans les jeux"
-            description="Votre vrai micro reste disponible dans Discord. Aucun enregistrement."
+            label="Ajouter ma voix au micro virtuel"
+            description="Choisissez le micro à mélanger avec vos sons. Capture uniquement après activation, sans enregistrement."
             checked={settings.gameMicEnabled}
             disabled={unavailable}
             onChange={(value) => update({ gameMicEnabled: value })}
@@ -316,7 +332,7 @@ export function GamePanel({
                 </select>
               </label>
               <Volume
-                label="Volume de ma voix en jeu"
+                label="Volume de ma voix"
                 value={settings.gameMicVolume}
                 onChange={(value) => update({ gameMicVolume: value })}
               />
@@ -364,7 +380,7 @@ export function GamePanel({
             </>
           )}
           <p className="hint">
-            Changer de périphérique ou de mélange désactive le mode jeu.
+            Changer de destination, de périphérique ou de mélange désactive le micro virtuel.
             Réactivez-le après vos réglages. STOP coupe les sons ; « Désactiver
             » libère aussi le micro.
           </p>
@@ -373,31 +389,44 @@ export function GamePanel({
       <section className="panel game-guide">
         <div className="section-title">
           <ShieldCheck size={21} />
-          <h2>3. Choisir le micro dans votre jeu</h2>
+          <h2>{everywhere ? "3. Choisir le micro dans vos applications" : "3. Choisir le micro dans votre jeu"}</h2>
         </div>
         <div className="game-routing">
           <div>
-            <span>DANS LE JEU</span>
+            <span>{everywhere ? "DANS VOS JEUX ET AUTRES APPLICATIONS" : "DANS LE JEU"}</span>
             <strong>CABLE Output (VB-Audio Virtual Cable)</strong>
             <p>
-              Votre voix et les sons. Gardez la touche « Appuyer pour parler »
-              du jeu si elle est requise.
+              {everywhere
+                ? "Sélectionnez ce périphérique comme entrée micro dans chaque application où vous voulez transmettre votre voix et les sons."
+                : "Votre voix et les sons. Gardez la touche « Appuyer pour parler » du jeu si elle est requise."}
             </p>
           </div>
           <div>
             <span>DANS DISCORD</span>
-            <strong>Votre microphone habituel</strong>
+            <strong>{everywhere ? "CABLE Output (VB-Audio Virtual Cable)" : "Votre microphone habituel"}</strong>
             <p>
-              Sélectionnez son nom plutôt que « Par défaut ». Krisp peut rester
-              activé. En destination « En jeu », le bot reste silencieux.
+              {everywhere
+                ? "Dans Paramètres utilisateur → Voix & vidéo, choisissez CABLE Output et désactivez vous-même la suppression du bruit / Krisp. Le son passe par votre compte, sans bot."
+                : "Sélectionnez son nom plutôt que « Par défaut ». Si Discord utilise encore CABLE Output, il recevra aussi les sons. Krisp peut rester activé avec votre micro habituel."}
             </p>
           </div>
         </div>
         <p className="hint">
-          Ne sélectionnez pas CABLE Output dans Discord et gardez votre casque
-          comme sortie Windows et sortie du jeu. Les jeux qui imposent leur
-          propre micro ou bloquent certains raccourcis peuvent demander un
-          réglage spécifique.
+          Seules les applications réglées sur CABLE Output reçoivent ce mélange.
+          Changer de mode ici ne change pas leur choix de microphone.
+        </p>
+        {everywhere && (
+          <p className="hint">
+            L’application ne change pas les réglages Discord. Si les sons restent
+            coupés, vérifiez la sensibilité d’entrée, l’annulation d’écho et les
+            autres filtres de l’application qui reçoit le micro. Les touches
+            « Appuyer pour parler » restent applicables.
+          </p>
+        )}
+        <p className="hint">
+          {everywhere
+            ? "Si un ami vous écoute sur Discord et dans le vocal du jeu en même temps, il entendra deux flux. Coupez l’un des deux vocaux. Gardez votre casque comme sortie audio ; si vous fermez la soundboard, choisissez à nouveau votre micro habituel dans vos applications."
+            : "Gardez votre micro habituel dans Discord et votre casque comme sortie Windows et sortie du jeu. Les jeux qui imposent leur propre micro ou bloquent certains raccourcis peuvent demander un réglage spécifique."}
         </p>
       </section>
     </>
