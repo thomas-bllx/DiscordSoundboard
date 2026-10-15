@@ -73,6 +73,19 @@ export function GamePanel({
     void run(api.updateSettings(patch));
   };
   const unavailable = busy || pending || state.driver.status === "installing";
+  const needsAudioSettings = ["disabled", "unavailable"].includes(
+    state.driver.status,
+  );
+  const driverAction = {
+    checking: "Vérification…",
+    missing: "Installer le composant audio",
+    installing: "Installation…",
+    installed: "Composant installé",
+    disabled: "Ouvrir les réglages audio",
+    unavailable: "Ouvrir les réglages audio",
+    restart: "Redémarrage nécessaire",
+    error: "Réessayer la vérification",
+  }[state.driver.status];
   async function activate() {
     if (!audio) return;
     setBusy(true);
@@ -165,17 +178,26 @@ export function GamePanel({
               onClick={async () => {
                 setBusy(true);
                 try {
-                  await run(api.installDriver());
-                  await refresh();
+                  if (needsAudioSettings) await run(api.openLink("audioSettings"));
+                  else {
+                    await run(
+                      state.driver.status === "error"
+                        ? api.refreshDriver()
+                        : api.installDriver(),
+                    );
+                    await refresh();
+                  }
                 } finally {
                   setBusy(false);
                 }
               }}
             >
-              <Download size={17} />
-              {state.driver.status === "installing"
-                ? "Installation…"
-                : "Installer le composant audio"}
+              {state.driver.status === "installed" ? (
+                <ShieldCheck size={17} />
+              ) : (
+                <Download size={17} />
+              )}
+              {driverAction}
             </button>
             <button
               className="secondary"
@@ -194,10 +216,21 @@ export function GamePanel({
               Actualiser
             </button>
           </div>
-          <p className="hint">
-            Windows demandera l’autorisation administrateur. Un redémarrage peut
-            être nécessaire ; l’application ne redémarre pas votre PC.
-          </p>
+          {needsAudioSettings && (
+            <p className="hint">
+              Dans les onglets Lecture et Enregistrement, faites un clic droit
+              dans la liste et cochez « Afficher les périphériques désactivés ».
+              Faites un clic droit sur CABLE Input puis CABLE Output et choisissez
+              « Activer ». Gardez votre casque et votre vrai micro comme appareils
+              par défaut.
+            </p>
+          )}
+          {!needsAudioSettings && state.driver.status !== "installed" && (
+            <p className="hint">
+              Windows demandera l’autorisation administrateur pour l’installation.
+              Un redémarrage peut être nécessaire ; l’application ne redémarre pas votre PC.
+            </p>
+          )}
           <div className="driver-credit">
             <strong>VB-CABLE · VB-Audio Software</strong>
             <p>

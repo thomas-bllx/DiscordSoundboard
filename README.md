@@ -1,14 +1,16 @@
 # Local Discord Soundboard
 
-## ⬇️ [Télécharger l’installeur Windows](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.1/Local-Discord-Soundboard-1.1.1-x64-nsis.exe)
+## ⬇️ [Télécharger l’installeur Windows](https://github.com/thomas-bllx/DiscordSoundboard/releases/download/v1.1.2/Local-Discord-Soundboard-1.1.2-x64-nsis.exe)
 
-**Windows 10 / 11 — 64 bits · Version 1.1.1 · Aucun Node.js, Git ou compilateur à installer.**
+**Windows 10 / 11 — 64 bits · Version 1.1.2 · Aucun Node.js, Git ou compilateur à installer.**
 
 1. Cliquez sur le lien ci-dessus et ouvrez le fichier téléchargé.
 2. Suivez l’assistant d’installation, puis ouvrez **Local Discord Soundboard**.
 3. Importez vos sons MP3, WAV ou OGG. Pour Discord, suivez le [guide de création de votre bot](#créer-le-bot-dans-discord). Pour les jeux, ouvrez **En jeu** dans l’application.
 
-[Notes de version et fichiers de téléchargement](https://github.com/thomas-bllx/DiscordSoundboard/releases/tag/v1.1.1) · [Guide du mode jeu](#diffuser-dans-les-jeux-sans-diffuser-dans-discord)
+[Notes de version et fichiers de téléchargement](https://github.com/thomas-bllx/DiscordSoundboard/releases/tag/v1.1.2) · [Guide du mode jeu](#diffuser-dans-les-jeux-sans-diffuser-dans-discord)
+
+**Déjà installé ?** Quittez la soundboard (y compris son icône près de l’horloge) puis lancez le nouvel installeur : vos sons et paramètres sont conservés. La version **1.1.2** corrige la demande répétée d’installation de VB-CABLE après redémarrage. Elle distingue un pilote absent d’un pilote installé mais désactivé dans Windows et indique comment le réactiver.
 
 L’application n’est pas signée avec un certificat commercial : Windows peut afficher une alerte d’éditeur inconnu. Téléchargez-la depuis ce dépôt officiel. **macOS, Linux et Windows ARM ne sont pas pris en charge.**
 
@@ -22,8 +24,8 @@ Pour compiler vous-même l’application, suivez la section [Développement et c
 
 Après compilation, dans `release/`, utilisez au choix :
 
-- `Local-Discord-Soundboard-1.1.1-x64-portable.exe` : application autonome, composants audio inclus.
-- `Local-Discord-Soundboard-1.1.1-x64-nsis.exe` : installeur Windows pour l’utilisateur courant.
+- `Local-Discord-Soundboard-1.1.2-x64-portable.exe` : application autonome, composants audio inclus.
+- `Local-Discord-Soundboard-1.1.2-x64-nsis.exe` : installeur Windows pour l’utilisateur courant.
 - `win-unpacked/Local Discord Soundboard.exe` : application décompressée. Gardez **tout le dossier** `win-unpacked` ensemble.
 
 Les noms ci-dessus correspondent aux cibles configurées ; les validations réellement réalisées sont consignées dans [docs/VALIDATION.md](docs/VALIDATION.md). Les exécutables ne sont pas signés avec un certificat commercial. Windows peut donc signaler un éditeur inconnu.
@@ -39,7 +41,7 @@ Le volume général démarre à 70 %. Une seule lecture est autorisée par desti
 
 ## Diffuser dans les jeux, sans diffuser dans Discord
 
-1. Ouvrez **En jeu → Installer le composant audio**. Le pilote officiel **VB-CABLE** est inclus : l’application vérifie son intégrité, l’extrait et lance l’installation. Validez la demande administrateur Windows. Redémarrez si nécessaire puis cliquez sur **Actualiser**. Aucun téléchargement séparé ni compte supplémentaire.
+1. Ouvrez **En jeu**. Si **Composant installé** apparaît, passez à l’étape suivante. Sinon, cliquez sur **Installer le composant audio**. Le pilote officiel **VB-CABLE** est inclus : l’application vérifie son intégrité, l’extrait et lance l’installation. Validez la demande administrateur Windows. Redémarrez si nécessaire puis rouvrez l’application : le composant est détecté automatiquement. Le bouton **Actualiser** permet de relancer la vérification. Aucun téléchargement séparé ni compte supplémentaire.
 2. Dans cette page, choisissez **CABLE Input (VB-Audio Virtual Cable)** comme sortie vers les jeux. Activez **Ajouter ma voix** et choisissez votre vrai micro si vous souhaitez continuer à parler dans le jeu. Choisissez votre casque pour la préécoute et, facultativement, le retour des sons.
 3. Dans les réglages vocaux du jeu, choisissez **CABLE Output (VB-Audio Virtual Cable)** comme microphone. Gardez votre casque comme sortie audio du jeu et de Windows.
 4. Dans Discord, sélectionnez **explicitement votre vrai microphone**, pas « Par défaut » ni CABLE Output. Krisp peut rester activé.
@@ -52,6 +54,16 @@ L’activation n’est pas restaurée automatiquement au lancement : vos choix d
 **VB-CABLE est un composant tiers de VB-Audio, en donationware ; tous les dons sont les bienvenus.** [Site officiel](https://vb-audio.com/Cable/), [licence et autorisation de distribution](https://vb-audio.com/Services/licensing.htm), [soutenir l’auteur](https://shop.vb-audio.com/en/win-apps/11-vb-cable.html). L’installation du pilote est facultative pour Discord et l’écoute locale. Même en version portable, ce pilote est installé dans Windows. Il n’est pas désinstallé avec la soundboard, car d’autres applications peuvent l’utiliser.
 
 La mise à jour conserve les sons, profils et paramètres, migre la configuration au format 2 et garde une copie du format 1. Ne réutilisez pas l’ancienne version 1.0 avec cette configuration migrée.
+
+### Le composant est installé mais désactivé dans Windows
+
+La soundboard propose **Ouvrir les réglages audio**, sans relancer l’installeur. Dans la fenêtre Son de Windows :
+
+1. Onglet **Lecture** : clic droit dans la liste → **Afficher les périphériques désactivés**. Faites un clic droit sur **CABLE Input** → **Activer**.
+2. Onglet **Enregistrement** : faites de même pour **CABLE Output**.
+3. Gardez votre casque et votre vrai microphone comme périphériques par défaut. Dans la soundboard, cliquez sur **Actualiser** : l’état doit passer à **Composant installé**.
+
+Si l’installation reste demandée après un redémarrage avec une ancienne version, installez d’abord la mise à jour 1.1.2. Des périphériques désactivés ne nécessitent pas une nouvelle installation de VB-CABLE. Si Windows signale un échec du pilote dans le Gestionnaire de périphériques, cette erreur doit être résolue avant son utilisation.
 
 ## Prérequis
 

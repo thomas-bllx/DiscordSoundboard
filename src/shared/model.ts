@@ -94,6 +94,8 @@ export interface DriverState {
     | "checking"
     | "missing"
     | "installed"
+    | "disabled"
+    | "unavailable"
     | "installing"
     | "restart"
     | "error";
@@ -269,7 +271,8 @@ export interface DesktopApi {
       | "data"
       | "cable"
       | "cableLicense"
-      | "cableDonate",
+      | "cableDonate"
+      | "audioSettings",
   ): Promise<Result<void>>;
   suspendShortcuts(suspended: boolean): Promise<Result<void>>;
   onEvent(callback: (event: AppEvent) => void): () => void;

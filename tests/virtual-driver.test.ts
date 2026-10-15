@@ -10,7 +10,7 @@ async function dataDir() {
 }
 describe("installation du composant audio", () => {
   it("does not launch the installer if both endpoints already exist", async () => {
-    const execute = vi.fn(async () => "present");
+    const execute = vi.fn(async () => '[{"Flow":"Render","State":1},{"Flow":"Capture","State":1}]');
     const driver = new VirtualDriver(
       "unused",
       await dataDir(),
@@ -24,7 +24,7 @@ describe("installation du composant audio", () => {
     const root = await dataDir();
     const tampered = join(root, "tampered.zip");
     await writeFile(tampered, "untrusted");
-    const execute = vi.fn(async () => "missing");
+    const execute = vi.fn(async () => "[]");
     expect(
       (await new VirtualDriver(tampered, root, vi.fn(), execute).install())
         .status,
@@ -34,10 +34,10 @@ describe("installation du composant audio", () => {
   it("treats UAC cancellation as cancellation and allows a retry", async () => {
     const execute = vi
       .fn<(_: string, timeout?: number) => Promise<string>>()
-      .mockResolvedValueOnce("missing")
+      .mockResolvedValueOnce("[]")
       .mockResolvedValueOnce("")
       .mockResolvedValueOnce("cancelled")
-      .mockResolvedValueOnce("missing");
+      .mockResolvedValueOnce("[]");
     const driver = new VirtualDriver(
       archive,
       await dataDir(),
@@ -52,10 +52,10 @@ describe("installation du composant audio", () => {
   it("does not mistake a successful process exit for an active audio driver", async () => {
     const execute = vi
       .fn<(_: string, timeout?: number) => Promise<string>>()
-      .mockResolvedValueOnce("missing")
+      .mockResolvedValueOnce("[]")
       .mockResolvedValueOnce("")
       .mockResolvedValueOnce("exit:0")
-      .mockResolvedValueOnce("missing");
+      .mockResolvedValueOnce("[]");
     expect(
       (
         await new VirtualDriver(
@@ -70,10 +70,10 @@ describe("installation du composant audio", () => {
   it("reports failure on an installer error with no active endpoints", async () => {
     const execute = vi
       .fn<(_: string, timeout?: number) => Promise<string>>()
-      .mockResolvedValueOnce("missing")
+      .mockResolvedValueOnce("[]")
       .mockResolvedValueOnce("")
       .mockResolvedValueOnce("exit:42")
-      .mockResolvedValueOnce("missing");
+      .mockResolvedValueOnce("[]");
     expect(
       (
         await new VirtualDriver(

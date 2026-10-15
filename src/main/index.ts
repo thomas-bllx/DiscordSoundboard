@@ -535,9 +535,18 @@ function registerIpc(): void {
                 "cable",
                 "cableLicense",
                 "cableDonate",
+                "audioSettings",
               ])
               .parse(data);
-            if (link === "cable")
+            if (link === "audioSettings") {
+              const error = await shell.openPath(
+                join(process.env.SystemRoot || "C:\\Windows", "System32/mmsys.cpl"),
+              );
+              if (error)
+                throw new UserError(
+                  "Impossible d’ouvrir les réglages audio. Ouvrez Son dans le Panneau de configuration Windows.",
+                );
+            } else if (link === "cable")
               await shell.openExternal("https://vb-audio.com/Cable/");
             else if (link === "cableLicense")
               await shell.openExternal(

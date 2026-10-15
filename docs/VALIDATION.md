@@ -1,5 +1,15 @@
 # Validation des versions Windows
 
+## Version 1.1.2 — détection de VB-CABLE
+
+- Vérification TypeScript et **73 tests automatisés réussis** le 15 octobre 2026.
+- Remplacement de la lecture du registre par l’API Windows Core Audio documentée : identification de l’adaptateur et lecture de l’état réel des périphériques, sans privilèges administrateur ni capture audio.
+- Détection réelle de CABLE Input et CABLE Output installés mais désactivés (`DEVICE_STATE_DISABLED`). Les anciennes valeurs du registre ne sont plus interprétées comme des états de l’API.
+- Deux ouvertures successives de l’application avec un profil de test isolé : le diagnostic « installé, mais désactivé » reste correct ; aucune nouvelle installation n’est proposée. Actualisation et cible du bouton ouvrant les réglages audio Windows vérifiées. Aucune capture micro effectuée.
+- Tests couvrant les deux périphériques actifs, désactivés, absents, incomplets, déconnectés, les anciennes entrées et les résultats invalides. Un pilote présent mais désactivé ne déclenche pas l’installeur.
+
+La réactivation des périphériques dans Windows, le parcours complet de l’installeur et l’audibilité dans un vrai jeu restent des vérifications distinctes. Les tests ne réinstallent pas le pilote et ne modifient pas les appareils par défaut.
+
 ## Version 1.1.1 — préparation de la distribution publique
 
 - Vérification TypeScript et **52 tests automatisés réussis** le 14 octobre 2026.
